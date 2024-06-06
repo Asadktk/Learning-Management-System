@@ -3,7 +3,7 @@ use Core\Container;
 use Core\Database;
 use Core\App;
 
-// var_dump(file_exists(__DIR__ . '/Core/Container.php'));
+
 $container = new Container();
 
 $container->bind('Core\Database', function () {
@@ -13,10 +13,8 @@ $container->bind('Core\Database', function () {
     return new Database($config['database']);
 });
 
-$db = $container->resolve('Core\Database');
-// var_dump($db);
-
-// $container('sdfsdaf');
+// $db = $container->resolve('Core\Database');
 
 App::setContainer($container);
 
+// var_dump($db);

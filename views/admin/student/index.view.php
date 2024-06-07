@@ -16,6 +16,11 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="table-responsive table--no-card m-b-30">
+
+                        <!-- <button class="mb-4 au-btn au-btn-icon au-btn--green au-btn--small">
+                        <i class="zmdi zmdi-plus"></i>add item</button> -->
+                         <a class="mb-4 au-btn au-btn-icon au-btn--green au-btn--small" href="/students/create">Add Student</a>
+
                             <table class="table table-borderless table-striped table-earning">
                                 <thead>
                                     <tr>
@@ -23,17 +28,22 @@
                                         <th>Id</th>
                                         <th>Name</th>
                                         <th>Email</th>
-                                        <!-- <th class="text-right">Role</th>
-                                        <th class="text-right">quantity</th>
+                                         <th> Operation</th>
+                                         
+                                         <!-- <th> <button class="au-btn au-btn-icon au-btn--green au-btn--small">
+                                         <i class="zmdi zmdi-plus"></i>add item</button></th> -->
+                                      <!--  <th class="text-right">quantity</th>
                                         <th class="text-right">total</th> -->
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($instructors  as $instructor) : ?>
+                                    <?php foreach ($students  as $student) : ?>
                                         <tr>
-                                            <td><?= $instructor['user_id'] ?></td>
-                                            <td><?= $instructor['name'] ?></td>
-                                            <td><?= $instructor['email'] ?></td>
+                                            <td><?= $student['user_id'] ?></td>
+                                            <td><?= $student['name'] ?></td>
+                                            <td><?= $student['email'] ?></td>
+                                            <th> <a class="au-btn au-btn-icon au-btn--green au-btn--small" href="/students/create">Edit</a></th>
+
                                         </tr>
                                     <?php endforeach; ?>
 

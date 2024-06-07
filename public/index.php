@@ -2,7 +2,7 @@
 
 use Core\Session;
 
-// session_start();
+session_start();
 const BASE_PATH = __DIR__ . '/../';
 // var_dump(BASE_PATH);
 
@@ -28,7 +28,7 @@ $method = $_POST['_method'] ?? $_SERVER['REQUEST_METHOD'];
 // dd($uri);
 $router->route($uri, $method);
 
-// Session::unflash();
+Session::unflash();
 // unset($_SESSION['_flashed']);/
 // require  base_path('Core/Router.php');
 

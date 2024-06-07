@@ -58,12 +58,29 @@ class Router
             if ($route['uri'] === $uri && $route['method'] === strtoupper($method)) {
               
                 Middleware::resolve($route['middleware']);
-              
-                return require base_path('Http/controllers/' . $route['controller']);
+                
+                return $this->callController($route['controller']);
+                // return require base_path('Http/controllers/' . $route['controller']);
             }
         }
 
         $this->abort();
+    }
+
+    protected function callController($controller)
+    {
+        [$controller, $method] = explode('@', $controller);
+        $controller = "Http\\Controllers\\{$controller}";
+
+        if (class_exists($controller)) {
+            $controllerInstance = new $controller;
+
+            if (method_exists($controllerInstance, $method)) {
+                return $controllerInstance->$method();
+            }
+        }
+
+        throw new \Exception("Controller or method not found");
     }
 
     function abort($code = 404)

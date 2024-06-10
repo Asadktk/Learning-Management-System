@@ -101,12 +101,19 @@ if (!$database->tableExists($students)) {
 
 // Define table structure for courses
 $courses = 'courses';
-$coursesColumns = 'id INT AUTO_INCREMENT PRIMARY KEY, title VARCHAR(255), description TEXT, start_date DATE, end_date DATE, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, deleted_at TIMESTAMP NULL';
+$coursesColumns = 'id INT AUTO_INCREMENT PRIMARY KEY, title VARCHAR(255), description TEXT, fee DECIMAL(10, 2), 
+                   available_seat INT,  start_date DATE, end_date DATE, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, deleted_at TIMESTAMP NULL';
 
 // Define seed data for courses
 $coursesData = [
-    ['title' => 'Mathematics', 'description' => 'Introduction to Mathematics', 'start_date' => '2024-06-01', 'end_date' => '2024-07-01'],
-    ['title' => 'Physics', 'description' => 'Introduction to Physics', 'start_date' => '2024-06-15', 'end_date' => '2024-07-15'],
+    [
+        'title' => 'Mathematics', 'description' => 'Introduction to Mathematics', 'fee' => 100.00,
+        'available_seat' => 30, 'start_date' => '2024-06-01', 'end_date' => '2024-07-01'
+    ],
+    [
+        'title' => 'Physics', 'description' => 'Introduction to Physics', 'fee' => 150.00,
+        'available_seat' => 25, 'start_date' => '2024-06-15', 'end_date' => '2024-07-15'
+    ],
 ];
 
 // Create the courses table if it doesn't exist
@@ -163,7 +170,7 @@ if (!$database->tableExists($enrollments)) {
     $database->createTable($enrollments, $enrollmentsColumns);
 
     // Define foreign key constraints
-   
+
     $database->addForeignKey($enrollments, 'student_id', 'students', 'id');
     $database->addForeignKey($enrollments, 'course_id', 'courses', 'id');
     // Seed the enrollments table with data

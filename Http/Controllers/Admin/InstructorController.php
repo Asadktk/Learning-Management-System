@@ -2,7 +2,7 @@
 
 namespace Http\Controllers\Admin;
 
-use Http\Models\Admin\Instructor;
+use Http\Models\Instructor;
 
 class InstructorController
 {

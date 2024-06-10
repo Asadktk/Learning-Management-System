@@ -77,4 +77,16 @@ class User
 
         return false;
     }
+
+    public function getInstructorByEmail($email)
+    {
+        $sql = 'SELECT instructors.id AS instructor_id, users.email
+                FROM users
+                INNER JOIN instructors ON users.id = instructors.user_id
+                WHERE users.email = :email';
+        $statement = $this->db->connection->prepare($sql);
+        $statement->execute(['email' => $email]);
+        return $statement->fetch(\PDO::FETCH_ASSOC);
+    }
+    
 }

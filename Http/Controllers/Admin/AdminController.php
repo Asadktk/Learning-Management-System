@@ -6,7 +6,7 @@ class AdminController
 {
     public function index()
     {
-        view('index.view.php', [
+        view('admin/index.view.php', [
             'heading' => 'Home'
         ]);
     }

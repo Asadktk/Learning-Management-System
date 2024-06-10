@@ -45,9 +45,9 @@ class AuthController
         if ($user) {
             switch ($user['role']) {
                 case 'admin':
-                    return redirect('/');
+                    return redirect('/admin-dashboard');
                 case 'instructor':
-                    return redirect('/instructor/dashboard');
+                    return redirect('/admin-dashboard');
                 case 'user':
                     return redirect('/user/dashboard');
                 default:

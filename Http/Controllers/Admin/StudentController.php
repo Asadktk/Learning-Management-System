@@ -2,7 +2,7 @@
 
 namespace Http\Controllers\Admin;
 
-use Http\Models\Admin\Student;
+use Http\Models\Student;
 
 class StudentController
 {

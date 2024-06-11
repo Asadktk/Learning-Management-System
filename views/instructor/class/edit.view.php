@@ -22,34 +22,41 @@
                                     <h3 class="text-center title-2">Class</h3>
                                 </div>
                                 <hr>
-                                <form id="class-form" novalidate="novalidate">
+                                <form id="class-form" method="post" action="/classes-update/<?= $courseClass['id']; ?>" novalidate="novalidate">
+
+                                    <input type="hidden" id="user_id" name="user_id" value='<?php echo $_SESSION["user"]["id"]; ?>'>
+                                    <input type="hidden" id="class_id" name="class_id" value='<?php echo $courseClass["id"]; ?>'>
+
                                     <div class="form-group">
-                                        <label for="course-select" class="control-label mb-1">Courses</label>
-                                        <select id="course-select" class="form-control" disabled>
+                                        <label for="cc-payment" class="control-label mb-1">Courses</label>
+                                        <select name="course_id" id="course-select" class="form-control">
                                             <option value="0">Please select</option>
                                             <?php foreach ($courses as $course) : ?>
-                                                <option value="<?= $course['id']; ?>" <?= $course['id'] == $courseClass['course_id'] ? 'selected' : ''; ?>>
-                                                    <?= $course['title']; ?>
-                                                </option>
+                                                <option value="<?= $course['id']; ?>" <?= isset($courseClass['course_id']) && $course['id'] == $courseClass['course_id'] ? 'selected' : ''; ?>><?= $course['title']; ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
+
                                     <div class="row">
                                         <div class="col-6">
                                             <div class="form-group">
-                                                <label for="start_time" class="control-label mb-1">Start Time</label>
-                                                <input id="start_time" type="time" class="form-control" value="<?= $courseClass['start_time']; ?>" disabled>
+                                                <label for="cc-exp" class="control-label mb-1">Start Time</label>
+                                                <input id="start_time" name="start_time" type="time" class="form-control" value="<?= $courseClass['start_time']; ?>">
                                             </div>
                                         </div>
+
                                         <div class="col-6">
                                             <div class="form-group">
-                                                <label for="end_time" class="control-label mb-1">End Time</label>
-                                                <input id="end_time" type="time" class="form-control" value="<?= $courseClass['end_time']; ?>" disabled>
+                                                <label for="cc-exp" class="control-label mb-1">End Time</label>
+                                                <input id="end_time" name="end_time" type="time" class="form-control" value="<?= $courseClass['end_time']; ?>">
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="form-group">
-                                        <button id="redirect-button" type="button" class="btn btn-lg btn-info btn-block">Back to Index</button>
+                                    <div>
+                                        <button id="submit-button" type="submit" class="btn btn-lg btn-info btn-block">
+                                            <span id="payment-button-amount">Update</span>
+                                            <span id="payment-button-sending" style="display:none;">Sending…</span>
+                                        </button>
                                     </div>
                                 </form>
 
@@ -69,14 +76,6 @@
     <!-- END PAGE CONTAINER-->
 </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Add event listener to the redirect button
-        const redirectButton = document.getElementById('redirect-button');
-        redirectButton.addEventListener('click', function() {
-            window.location.href = '/classes-index'; // Redirect to the index page
-        });
-    });
-</script>
+<script src="assets/js/add-class.js"></script>
 
 <?php require base_path('views/partials/footer.php') ?>

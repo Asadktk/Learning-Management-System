@@ -23,7 +23,7 @@
                         <?php if ($_SESSION['user'] ?? false) : ?>
                             <div class="account-item clearfix js-item-menu">
                                 <div class="image">
-                                    <img src="assets/images/icon/avatar-01.jpg" alt="John Doe" />
+                                    <img src="/assets/images/icon/avatar-01.jpg" alt="John Doe" />
                                 </div>
                                 <div class="content">
                                     <a class="js-acc-btn" href="#">john doe</a>
@@ -32,7 +32,7 @@
                                     <div class="info clearfix">
                                         <div class="image">
                                             <a href="#">
-                                                <img src="assets/images/icon/avatar-01.jpg" alt="John Doe" />
+                                                <img src="/assets/images/icon/avatar-01.jpg" alt="John Doe" />
                                             </a>
                                         </div>
                                         <div class="content">

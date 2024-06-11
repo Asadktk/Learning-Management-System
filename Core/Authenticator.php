@@ -27,6 +27,7 @@ class Authenticator
     public function login($user)
     {
         $_SESSION['user'] = [
+            'id' => $user['id'],
             'email' => $user['email'],
             'role' => $user['role'] 
         ];

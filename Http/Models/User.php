@@ -16,17 +16,12 @@ class User
 
     public function attempt($email, $password)
     {
-        // Fetch user record from the database based on the provided email
         $user = $this->getUserByEmail($email);
 
-        // Verify password if user exists
         if ($user && password_verify($password, $user['password'])) {
-            // Authentication successful
-            // You can perform additional tasks here, such as setting session variables
-            return $user; // Return the user data instead of true
+            return $user; 
         }
 
-        // Authentication failed
         return false;
     }
 

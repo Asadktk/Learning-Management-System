@@ -1,29 +1,29 @@
 document.addEventListener('DOMContentLoaded', function() {
-
     const form = document.getElementById('class-form');
 
-    const submitButton = document.getElementById('submit-button');
-
     form.addEventListener('submit', function(event) {
+        event.preventDefault();
 
-        event.preventDefault(); // Prevent default form submission
-
-        // Validate start and end times
-        const startTime = document.getElementById('start-time').value;
-        const endTime = document.getElementById('end-time').value;
+        const startTime = document.getElementById('start_time').value;
+        const endTime = document.getElementById('end_time').value;
 
         if (startTime >= endTime) {
-            // Show error message
             alert('Start time must be less than end time');
             return;
         }
 
-        // Form data
+        const userId = document.getElementById('user_id').value;
         const formData = new FormData(form);
+        formData.append('user_id', userId);
 
-        // AJAX request
-        fetch('/classes-store', {
-                method: 'POST',
+        const classIdElement = document.getElementById('class_id');
+        const isUpdateOperation = classIdElement !== null && classIdElement.value !== '';
+
+        const url = isUpdateOperation ? `/classes-update/${classIdElement.value}` : '/classes-store';
+        const method = isUpdateOperation ? 'POST' : 'POST';
+
+        fetch(url, {
+                method: method,
                 body: formData
             })
             .then(response => {
@@ -33,14 +33,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 return response.json();
             })
             .then(data => {
-                // Handle success
                 console.log(data);
-                // Optionally, redirect or show a success message
+                if (data.redirect) {
+
+                    if (!isUpdateOperation) {
+                        window.location.href = data.redirect;
+                    } else {
+                        alert(data.message);
+                    }
+                } else {
+                    alert(data.message);
+                }
             })
             .catch(error => {
-                // Handle errors
                 console.error('There was a problem with the fetch operation:', error);
-                // Optionally, display an error message to the user
+                alert('Error: ' + error.message);
             });
     });
 });

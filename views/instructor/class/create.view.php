@@ -23,7 +23,11 @@
                                 </div>
                                 <hr>
                                 <form id="class-form" method="post" novalidate="novalidate">
+
+
                                     <div class="form-group">
+                                    <input type="hidden" id="user_id" name="user_id" value='<?php echo $_SESSION["user"]["id"]; ?>'>
+
                                         <label for="cc-payment" class="control-label mb-1">Courses</label>
                                         <select name="course_id" id="course-select" class="form-control">
                                             <option value="0">Please select</option>
@@ -37,14 +41,14 @@
                                         <div class="col-6">
                                             <div class="form-group">
                                                 <label for="cc-exp" class="control-label mb-1">Start Time</label>
-                                                <input id="start_time" name="start_time" type="time" class="form-control">                                                <span class="help-block" data-valmsg-for="cc-exp" data-valmsg-replace="true"></span>
+                                                <input id="start_time" name="start_time" type="time" class="form-control"> <span class="help-block" data-valmsg-for="cc-exp" data-valmsg-replace="true"></span>
                                             </div>
                                         </div>
 
                                         <div class="col-6">
                                             <div class="form-group">
                                                 <label for="cc-exp" class="control-label mb-1">End Time</label>
-                                                <input id="end_time" name="end_time" type="time" class="form-control">                                                <span class="help-block" data-valmsg-for="cc-exp" data-valmsg-replace="true"></span>
+                                                <input id="end_time" name="end_time" type="time" class="form-control"> <span class="help-block" data-valmsg-for="cc-exp" data-valmsg-replace="true"></span>
                                             </div>
                                         </div>
 
@@ -72,6 +76,6 @@
     <!-- END PAGE CONTAINER-->
 </div>
 
-<script src="assets/js/add-class.js">
+<script src="assets/js/add-class.js"></script>
 
 <?php require base_path('views/partials/footer.php') ?>

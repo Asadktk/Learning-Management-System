@@ -12,6 +12,19 @@ $router->get('/admin-dashboard', 'Admin\AdminController@index');
 $router->get('/students', 'Admin\StudentController@index');
 $router->get('/students/create', 'Admin\StudentController@create');
 $router->get('/instructors', 'Admin\InstructorController@index');
+// $router->get('/instructors', 'Admin\InstructorController@index');
+$router->get('/admin/instructor/edit/{id}', 'Admin\InstructorController@edit');
+$router->get('/admin/instructor/show/{id}', 'Admin\InstructorController@show');
+
+$router->get('/admin/courses', 'Admin\CoursesController@index');
+$router->get('/admin/courses/create', 'Admin\CoursesController@create');
+$router->post('/admin/course/store', 'Admin\CoursesController@store');
+$router->get('/admin/course/edit/{id}', 'Admin\CoursesController@edit');
+$router->post('/admin/course/update/{id}', 'Admin\CoursesController@update');
+$router->get('/admin/course/destroy/{id}', 'Admin\CoursesController@destroy');
+$router->get('/admin/course/show/{id}', 'Admin\CoursesController@show');
+
+
 
 //instructor
 $router->get('/classes-index', 'Instructor\ClassController@index');

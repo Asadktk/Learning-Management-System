@@ -23,11 +23,8 @@
                                 </div>
                                 <hr>
                                 <form id="class-form" method="post" novalidate="novalidate">
-
-
                                     <div class="form-group">
-                                    <input type="hidden" id="user_id" name="user_id" value='<?php echo $_SESSION["user"]["id"]; ?>'>
-
+                                        <input type="hidden" id="user_id" name="user_id" value='<?php echo $_SESSION["user"]["id"]; ?>'>
                                         <label for="cc-payment" class="control-label mb-1">Courses</label>
                                         <select name="course_id" id="course-select" class="form-control">
                                             <option value="0">Please select</option>
@@ -36,26 +33,24 @@
                                             <?php endforeach; ?>
                                         </select>
                                     </div>
-
                                     <div class="row">
                                         <div class="col-6">
                                             <div class="form-group">
                                                 <label for="cc-exp" class="control-label mb-1">Start Time</label>
-                                                <input id="start_time" name="start_time" type="time" class="form-control"> <span class="help-block" data-valmsg-for="cc-exp" data-valmsg-replace="true"></span>
+                                                <input id="start_time" name="start_time" type="time" class="form-control">
+                                                <span class="help-block" data-valmsg-for="cc-exp" data-valmsg-replace="true"></span>
                                             </div>
                                         </div>
-
                                         <div class="col-6">
                                             <div class="form-group">
                                                 <label for="cc-exp" class="control-label mb-1">End Time</label>
-                                                <input id="end_time" name="end_time" type="time" class="form-control"> <span class="help-block" data-valmsg-for="cc-exp" data-valmsg-replace="true"></span>
+                                                <input id="end_time" name="end_time" type="time" class="form-control">
+                                                <span class="help-block" data-valmsg-for="cc-exp" data-valmsg-replace="true"></span>
                                             </div>
                                         </div>
-
                                     </div>
                                     <div>
                                         <button id="submit-button" type="submit" class="btn btn-lg btn-info btn-block">
-
                                             <span id="payment-button-amount">Create</span>
                                             <span id="payment-button-sending" style="display:none;">Sending…</span>
                                         </button>
@@ -64,17 +59,14 @@
                             </div>
                         </div>
                     </div>
-
-
                 </div>
-
-
             </div>
         </div>
     </div>
     <!-- END MAIN CONTENT-->
     <!-- END PAGE CONTAINER-->
 </div>
+
 
 <script src="assets/js/add-class.js"></script>
 

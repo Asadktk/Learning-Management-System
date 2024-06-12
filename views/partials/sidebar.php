@@ -35,6 +35,10 @@
                         <a href="/students">
                             <i class="<?= urlIs('/students') ? 'active' : '' ?>fas fa-table"></i>Students</a>
                     </li>
+                    <li>
+                        <a href="/admin/courses" class="<?= urlIs('/admin/courses') ? 'active' : '' ?>">
+                            <i class="<?= urlIs('/admin/courses') ? 'active' : '' ?>fas fa-table"></i>Courses</a>
+                    </li>
 
                     <?php else : ?>
                     <li>

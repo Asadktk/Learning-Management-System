@@ -66,7 +66,7 @@ class ClassController
 
     public function store()
     {
-
+        header('Content-Type: application/json');
 
         $startTime = $_POST['start_time'];
         $endTime = $_POST['end_time'];
@@ -90,8 +90,6 @@ class ClassController
             exit;
         }
 
-        $classModel = new ClassModel();
-
         $result = $classModel->createClass($courseId, $instructorId, $startTime, $endTime);
 
         if ($result) {
@@ -101,6 +99,7 @@ class ClassController
             echo json_encode(['error' => 'Failed to create class']);
         }
     }
+
 
 
     public function edit($id)
@@ -121,6 +120,8 @@ class ClassController
 
     public function update($id)
     {
+        header('Content-Type: application/json');
+
         $startTime = $_POST['start_time'];
         $endTime = $_POST['end_time'];
         $userId = $_POST['user_id'];
@@ -145,12 +146,19 @@ class ClassController
         $result = $classModel->updateClass($id, $courseId, $instructorId, $startTime, $endTime);
 
         if ($result) {
-            echo json_encode(['message' => 'Class updated successfully', 'redirect' => '/classes-index']);
-            
+            $response = [
+                'message' => 'Class updated successfully',
+                'redirect' => '/classes-index'
+            ];
         } else {
-            http_response_code(500);
-            echo json_encode(['error' => 'Failed to update class']);
+            $response = [
+                'error' => 'Failed to created class'
+            ];
         }
+
+        // Send JSON response
+        header('Content-Type: application/json');
+        echo json_encode($response);
     }
 
     public function show($id)
@@ -174,11 +182,20 @@ class ClassController
         $classModel = new ClassModel();
         $result = $classModel->deleteClass($id);
 
+
         if ($result) {
-            echo json_encode(['message' => 'Class deleted successfully', 'redirect' => '/classes-index']);
+            $response = [
+                'message' => 'Class deleted successfully',
+                'redirect' => '/classes-index'
+            ];
         } else {
-            http_response_code(500);
-            echo json_encode(['error' => 'Failed to delete class']);
+            $response = [
+                'error' => 'Failed to deleted class'
+            ];
         }
+
+        // Send JSON response
+        header('Content-Type: application/json');
+        echo json_encode($response);
     }
 }

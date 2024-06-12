@@ -34,7 +34,11 @@
     <!-- Main CSS-->
     <link href="/assets/css/theme.css" rel="stylesheet" media="all">
 
+     <!-- jQuery -->
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
 </head>
 
-<body>
+<body class="animsition">
     <div class="page-wrapper">

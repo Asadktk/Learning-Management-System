@@ -86,10 +86,10 @@ class ClassModel
         $stmt->bindParam(":id", $id);
 
         if ($stmt->execute()) {
-            return json_encode(['success' => true, 'redirect' => '/classes-index']);
+            return true;
         }
 
-        return json_encode(['success' => false, 'error' => 'Failed to update class']);
+        return false;
     }
 
     public function deleteClass($id)

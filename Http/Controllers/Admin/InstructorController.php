@@ -15,4 +15,15 @@ class InstructorController
             'instructors' => $instructors
         ]);
     }
+
+    public function show($id)
+    {   
+        
+        $instructorModel = new Instructor();
+        $instructor = $instructorModel->getInstructorById($id);
+        
+        view('admin/instructor/show.view.php', [
+            'instructor' => $instructor
+        ]);
+    }
 }

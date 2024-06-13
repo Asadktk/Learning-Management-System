@@ -16,7 +16,7 @@ class Role
 
     public function getAllRoles()
     {
-        // Fetch all roles from the database
+        
         $sql = 'SELECT * FROM roles';
         $statement = $this->db->connection->prepare($sql);
         $statement->execute();

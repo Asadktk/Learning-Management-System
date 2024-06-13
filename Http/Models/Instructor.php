@@ -18,19 +18,20 @@ class Instructor
     {
         // Constructing the WHERE condition based on the $active parameter
         $activeCondition = $active ? 'IS NULL' : 'IS NOT NULL';
-    
+
         // Your SQL query with the dynamic WHERE clause
         $sql = 'SELECT i.*, u.name, u.email FROM instructors AS i 
             JOIN users AS u ON i.user_id = u.id 
             WHERE u.role_id = 2 AND i.deleted_at ' . $activeCondition;
-    
+
         // Prepare and execute the statement
         $statement = $this->db->connection->prepare($sql);
         $statement->execute();
-        
+
         // Fetch and return the result
         return $statement->fetchAll(\PDO::FETCH_ASSOC);
     }
+
 
 
     public function getInstructorById($id)
@@ -64,6 +65,29 @@ class Instructor
     }
 
 
+    public function softDelete($id)
+    {
+        $sql = 'UPDATE instructors SET deleted_at = NOW() WHERE id = :id';
+        $statement = $this->db->connection->prepare($sql);
+        $statement->execute(['id' => $id]);
+    }
+
+    public function unblock($id)
+    {
+        $sql = 'UPDATE instructors SET deleted_at = NULL WHERE id = :id';
+        $statement = $this->db->connection->prepare($sql);
+        $statement->execute(['id' => $id]);
+    }
+
+    public function delete($id)
+    {
+        $sql = 'DELETE FROM instructors WHERE id = :id';
+        $statement = $this->db->connection->prepare($sql);
+        $statement->execute(['id' => $id]);
+    }
+
+
+    
 
 
     // public function updateInstructor($id, $name, $email, $password, $role_id)

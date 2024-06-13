@@ -32,12 +32,12 @@
                             <i class="<?= urlIs('/instructors') ? 'active' : '' ?> fas fa-chart-bar"></i>Instructor</a>
                     </li>
                     <li>
-                        <a href="/students">
-                            <i class="<?= urlIs('/students') ? 'active' : '' ?>fas fa-table"></i>Students</a>
+                        <a href="/admin/students" class="<?= urlIs('/admin/students') ? 'active' : '' ?>">
+                            <i class="fas fa-table"></i>Students</a>
                     </li>
                     <li>
                         <a href="/admin/courses" class="<?= urlIs('/admin/courses') ? 'active' : '' ?>">
-                            <i class="<?= urlIs('/admin/courses') ? 'active' : '' ?>fas fa-table"></i>Courses</a>
+                            <i class="fas fa-table"></i>Courses</a>
                     </li>
 
                     <?php else : ?>

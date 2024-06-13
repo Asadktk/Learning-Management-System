@@ -65,11 +65,11 @@
                 }
                 ?></p>
 
-              
+
           </div>
-        <!-- enroll cta -->
-        <a style="background-color: #04AA6D; border: none; color: white; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer; padding: 6px 18px;
-    border-radius: 7px;" href="">enroll</a>
+          <!-- enroll cta -->
+          <a style="background-color: #04AA6D; border: none; color: white; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer; padding: 6px 18px;
+             border-radius: 7px;" href="/course-enroll/<?=  $course['id'] ?>">enroll</a>
         </div>
       </div>
 

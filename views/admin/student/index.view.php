@@ -16,40 +16,41 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="table-responsive table--no-card m-b-30">
-
-                        <!-- <button class="mb-4 au-btn au-btn-icon au-btn--green au-btn--small">
-                        <i class="zmdi zmdi-plus"></i>add item</button> -->
-                         <a class="mb-4 au-btn au-btn-icon au-btn--green au-btn--small" href="/students/create">Add Student</a>
-
-                            <table class="table table-borderless table-striped table-earning">
+                            <button id="toggleNonActiveButton" class="btn btn-primary">Show Non-Active Students</button>
+                            <table id="studentTable" class="table table-borderless table-striped table-earning">
                                 <thead>
-                                    <tr>
                                     <tr>
                                         <th>Id</th>
                                         <th>Name</th>
                                         <th>Email</th>
-                                         <th> Operation</th>
-                                         
-                                         <!-- <th> <button class="au-btn au-btn-icon au-btn--green au-btn--small">
-                                         <i class="zmdi zmdi-plus"></i>add item</button></th> -->
-                                      <!--  <th class="text-right">quantity</th>
-                                        <th class="text-right">total</th> -->
+                                        <th>Operation</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <?php foreach ($students  as $student) : ?>
-                                        <tr>
+                                <tbody id="studentsTableBody">
+                                    <?php foreach ($students as $student) : ?>
+                                        <tr class="<?= ($student['deleted_at'] === null) ? 'active-student' : 'non-active-student'; ?>">
                                             <td><?= $student['user_id'] ?></td>
                                             <td><?= $student['name'] ?></td>
                                             <td><?= $student['email'] ?></td>
-                                            <th> <a class="au-btn au-btn-icon au-btn--green au-btn--small" href="/students/create">Edit</a></th>
+                                            <td>
+                                                <a class="btn btn-success btn-sm" href="/admin/student/edit/<?= $student['id']; ?>">Edit</a>
+                                                <a class="btn btn-primary btn-sm" href="/admin/student/show/<?= $student['id']; ?>">View</a>
+                                                <a class="btn btn-danger btn-sm btn-delete" href="/admin/student/destroy/<?= $student['id']; ?>" onclick="return confirm('Are you sure you want to permanently delete this student?');">Delete</a>
+                                                <?php if ($student['deleted_at'] === null) : ?>
+                                                    <a class="btn btn-warning btn-sm btn-block" href="/admin/student/block/<?= $student['id']; ?>" onclick="return confirm('Are you sure you want to block this student?');">Block</a>
 
+                                                <?php else : ?>
+                                                    <a class="btn btn-success btn-sm btn-unblock" href="/admin/student/unblock/<?= $student['id']; ?>" onclick="return confirm('Are you sure you want to unblock this student?');">Unblock</a>
+                                                <?php endif; ?>
+                                            </td>
                                         </tr>
                                     <?php endforeach; ?>
-
                                 </tbody>
+
+
                             </table>
                         </div>
+
                     </div>
 
                 </div>
@@ -62,4 +63,94 @@
     <!-- END PAGE CONTAINER-->
 </div>
 
+
+
+<script>
+        function loadStudents(showNonActive) {
+            $.ajax({
+                url: `/students/fetch?active=${!showNonActive}`,
+                method: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    const $tableBody = $('#studentsTableBody');
+                    $tableBody.empty();
+
+                    $.each(data, function(index, student) {
+                        const trClass = student.deleted_at === null ? 'active-student' : 'non-active-student';
+                        const blockUnblockButton = student.deleted_at === null 
+                            ? `<a class="btn btn-warning btn-sm btn-block" href="#" data-id="${student.id}" data-action="block">Block</a>`
+                            : `<a class="btn btn-success btn-sm btn-unblock" href="#" data-id="${student.id}" data-action="unblock">Unblock</a>`;
+
+                        const tr = `
+                            <tr class="${trClass}">
+                                <td>${student.user_id}</td>
+                                <td>${student.name}</td>
+                                <td>${student.email}</td>
+                                <td>
+                                    <a class="btn btn-primary btn-sm" href="/admin/student/show/${student.id}">View</a>
+                                    <a class="btn btn-danger btn-sm btn-delete" href="#" data-id="${student.id}" data-action="delete">Delete</a>
+                                    ${blockUnblockButton}
+                                </td>
+                            </tr>
+                        `;
+                        $tableBody.append(tr);
+                    });
+
+                    $('#toggleNonActiveButton').text(showNonActive ? 'Show Active students' : 'Show Non-Active students');
+                },
+                error: function(error) {
+                    console.error('Error fetching students:', error);
+                }
+            });
+        }
+
+        $(document).ready(function() {
+            let showNonActive = false;
+
+            $('#toggleNonActiveButton').on('click', function() {
+                showNonActive = !showNonActive;
+                loadStudents(showNonActive);
+            });
+
+            $('#studentsTableBody').on('click', 'a[data-action]', function(e) {
+                e.preventDefault();
+                const action = $(this).data('action');
+                const id = $(this).data('id');
+                let confirmMessage;
+
+                if (action === 'delete') {
+                    confirmMessage = 'Are you sure you want to permanently delete this student?';
+                } else if (action === 'block') {
+                    confirmMessage = 'Are you sure you want to block this student?';
+                } else if (action === 'unblock') {
+                    confirmMessage = 'Are you sure you want to unblock this student?';
+                }
+
+                if (confirm(confirmMessage)) {
+                    $.ajax({
+                        url: `/admin/student/${action}/${id}`,
+                        method: 'GET',
+                        success: function() {
+                            loadStudents(showNonActive);
+                        },
+                        error: function(error) {
+                            console.error(`Error during ${action} action:`, error);
+                        }
+                    });
+                }
+            });
+
+            // Initial load of active instructors
+            loadStudents(showNonActive);
+        });
+    </script>
+
 <?php require base_path('views/partials/footer.php') ?>
+
+
+
+
+
+
+
+

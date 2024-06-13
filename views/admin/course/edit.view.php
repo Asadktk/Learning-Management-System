@@ -23,9 +23,23 @@
                                 </div>
                                 <hr>
                                 <form id="course-form" method="POST" novalidate="novalidate">
-                                <!-- <input type="hidden" name="_method" value="PUT"> -->
+                                    <!-- <input type="hidden" name="_method" value="PUT"> -->
+
+
                                     <div class="form-group">
-                                    <input type="hidden" id="course-id" value="<?= $course['id'] ?? '' ?>">
+                                        <select multiple name="instructor_ids[]" id="course-select" class="form-control">
+                                            <?php foreach ($instructors as $instructor) : ?>
+                                                <?php $isSelected = in_array($instructor['id'], $selectedInstructors); ?>
+                                                <option value="<?= $instructor['id']; ?>" <?= $isSelected ? 'selected' : ''; ?>>
+                                                    <?= $instructor['name']; ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <input type="hidden" id="course-id" value="<?= $course['id'] ?? '' ?>">
                                         <label for="title" class="control-label mb-1">Course Title</label>
                                         <input type="text" id="title" name="title" class="form-control" value="<?= $course['title'] ?? '' ?>">
                                     </div>

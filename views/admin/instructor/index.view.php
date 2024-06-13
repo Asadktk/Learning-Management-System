@@ -26,7 +26,7 @@
                                         <th>Operation</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="instructorsTableBody">
                                     <?php foreach ($instructors as $instructor) : ?>
                                         <tr class="<?= ($instructor['deleted_at'] === null) ? 'active-instructor' : 'non-active-instructor'; ?>">
                                             <td><?= $instructor['user_id'] ?></td>
@@ -35,13 +35,22 @@
                                             <td>
                                                 <a class="btn btn-success btn-sm" href="/admin/instructor/edit/<?= $instructor['id']; ?>">Edit</a>
                                                 <a class="btn btn-primary btn-sm" href="/admin/instructor/show/<?= $instructor['id']; ?>">View</a>
-                                                <a class="btn btn-danger btn-sm btn-delete" href="/admin/instructor/destroy/<?= $instructor['id']; ?>">Delete</a>
+                                                <a class="btn btn-danger btn-sm btn-delete" href="/admin/instructor/destroy/<?= $instructor['id']; ?>" onclick="return confirm('Are you sure you want to permanently delete this instructor?');">Delete</a>
+                                                <?php if ($instructor['deleted_at'] === null) : ?>
+                                                    <a class="btn btn-warning btn-sm btn-block" href="/admin/instructor/block/<?= $instructor['id']; ?>" onclick="return confirm('Are you sure you want to block this instructor?');">Block</a>
+
+                                                <?php else : ?>
+                                                    <a class="btn btn-success btn-sm btn-unblock" href="/admin/instructor/unblock/<?= $instructor['id']; ?>" onclick="return confirm('Are you sure you want to unblock this instructor?');">Unblock</a>
+                                                <?php endif; ?>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
                                 </tbody>
+
+
                             </table>
                         </div>
+
                     </div>
 
                 </div>
@@ -55,37 +64,93 @@
 </div>
 
 
+
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        document.getElementById('toggleNonActiveButton').addEventListener('click', function() {
-            var activeInstructors = document.querySelectorAll('.active-instructor');
-            activeInstructors.forEach(function(instructor) {
-                instructor.style.display = 'none';
+        function loadInstructors(showNonActive) {
+            $.ajax({
+                url: `/instructors/fetch?active=${!showNonActive}`,
+                method: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    const $tableBody = $('#instructorsTableBody');
+                    $tableBody.empty();
+
+                    $.each(data, function(index, instructor) {
+                        const trClass = instructor.deleted_at === null ? 'active-instructor' : 'non-active-instructor';
+                        const blockUnblockButton = instructor.deleted_at === null 
+                            ? `<a class="btn btn-warning btn-sm btn-block" href="#" data-id="${instructor.id}" data-action="block">Block</a>`
+                            : `<a class="btn btn-success btn-sm btn-unblock" href="#" data-id="${instructor.id}" data-action="unblock">Unblock</a>`;
+
+                        const tr = `
+                            <tr class="${trClass}">
+                                <td>${instructor.user_id}</td>
+                                <td>${instructor.name}</td>
+                                <td>${instructor.email}</td>
+                                <td>
+                                    <a class="btn btn-primary btn-sm" href="/admin/instructor/show/${instructor.id}">View</a>
+                                    <a class="btn btn-danger btn-sm btn-delete" href="#" data-id="${instructor.id}" data-action="delete">Delete</a>
+                                    ${blockUnblockButton}
+                                </td>
+                            </tr>
+                        `;
+                        $tableBody.append(tr);
+                    });
+
+                    $('#toggleNonActiveButton').text(showNonActive ? 'Show Active Instructors' : 'Show Non-Active Instructors');
+                },
+                error: function(error) {
+                    console.error('Error fetching instructors:', error);
+                }
             });
-            var nonActiveInstructors = document.querySelectorAll('.non-active-instructor');
-            nonActiveInstructors.forEach(function(instructor) {
-                instructor.style.display = 'table-row';
+        }
+
+        $(document).ready(function() {
+            let showNonActive = false;
+
+            $('#toggleNonActiveButton').on('click', function() {
+                showNonActive = !showNonActive;
+                loadInstructors(showNonActive);
             });
-            // Change button text and functionality
-            this.textContent = 'Show Active Instructors';
-            this.removeEventListener('click', arguments.callee);
-            this.addEventListener('click', function() {
-                activeInstructors.forEach(function(instructor) {
-                    instructor.style.display = 'table-row';
-                });
-                nonActiveInstructors.forEach(function(instructor) {
-                    instructor.style.display = 'none';
-                });
-                // Reset button text and functionality
-                this.textContent = 'Show Non-Active Instructors';
-                this.removeEventListener('click', arguments.callee);
-                this.addEventListener('click', function() {
-                    // Call this function again to toggle
-                    arguments.callee();
-                });
+
+            $('#instructorsTableBody').on('click', 'a[data-action]', function(e) {
+                e.preventDefault();
+                const action = $(this).data('action');
+                const id = $(this).data('id');
+                let confirmMessage;
+
+                if (action === 'delete') {
+                    confirmMessage = 'Are you sure you want to permanently delete this instructor?';
+                } else if (action === 'block') {
+                    confirmMessage = 'Are you sure you want to block this instructor?';
+                } else if (action === 'unblock') {
+                    confirmMessage = 'Are you sure you want to unblock this instructor?';
+                }
+
+                if (confirm(confirmMessage)) {
+                    $.ajax({
+                        url: `/admin/instructor/${action}/${id}`,
+                        method: 'GET',
+                        success: function() {
+                            loadInstructors(showNonActive);
+                        },
+                        error: function(error) {
+                            console.error(`Error during ${action} action:`, error);
+                        }
+                    });
+                }
             });
+
+            // Initial load of active instructors
+            loadInstructors(showNonActive);
         });
-    });
-</script>
+    </script>
 
 <?php require base_path('views/partials/footer.php') ?>
+
+
+
+
+
+
+
+

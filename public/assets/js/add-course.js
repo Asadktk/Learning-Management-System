@@ -1,7 +1,12 @@
 $(document).ready(function() {
     $('#course-form').on('submit', function(event) {
         event.preventDefault();
-        var formData = $(this).serialize();
+
+        // Serialize form data including selected instructor IDs
+        var formData = $(this).serializeArray();
+        var instructorIds = $('#course-select').val(); // Assuming the select element has id="course-select"
+        formData.push({ name: 'instructor_ids[]', value: instructorIds });
+
         var courseId = $('#course-id').val(); // Assuming there's a hidden input with id="course-id"
         var url = courseId ? '/admin/course/update/' + courseId : '/admin/course/store';
         var method = courseId ? 'POST' : 'POST'; // Using PUT for update, POST for create

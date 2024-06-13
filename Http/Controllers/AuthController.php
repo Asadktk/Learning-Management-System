@@ -122,13 +122,10 @@ class AuthController
 
     public function logout()
     {
-        // Perform logout operations here
-        // For example, clearing session data or destroying session
 
         // Destroy session data
         session_destroy();
 
-        // Redirect to home page or any other desired location
         header('Location: /');
         exit();
     }

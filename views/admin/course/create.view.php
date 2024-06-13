@@ -23,6 +23,19 @@
                                 </div>
                                 <hr>
                                 <form id="course-form" method="post" novalidate="novalidate">
+
+
+
+                                    <div class="form-group">
+                                        <select multiple name="course_id" id="course-select" class="form-control">
+                                            <option value="0">Please select</option>
+                                            <?php foreach ($instructors as $instructor) : ?>
+                                                <option value="<?= $instructor['id']; ?>"><?= $instructor['name']; ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+
+
                                     <div class="form-group">
                                         <label for="cc-payment" class="control-label mb-1">Courses Title</label>
                                         <input type="text" id="title" name="title" class="form-control">

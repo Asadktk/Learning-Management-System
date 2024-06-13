@@ -131,11 +131,11 @@ if (!$database->tableExists($courses)) {
 
 // Define table structure for instructor_course
 $instructorCourse = 'instructor_course';
-$instructorCourseColumns = 'instructor_id INT, course_id INT, PRIMARY KEY (instructor_id, course_id)';
+$instructorCourseColumns = 'id INT AUTO_INCREMENT PRIMARY KEY, instructor_id INT, course_id INT, enrollment_id INT';
 
-// Define seed data for instructor_course (assuming Arsalan is the instructor of Mathematics course)
+
 $instructorCourseData = [
-    ['instructor_id' => 1, 'course_id' => 1], // Arsalan Instructor for Mathematics
+    ['instructor_id' => 1, 'course_id' => 1, 'enrollment_id' => 1], 
 ];
 
 // Create the instructor_course table if it doesn't exist
@@ -146,6 +146,7 @@ if (!$database->tableExists($instructorCourse)) {
     // Define foreign key constraints
     $database->addForeignKey($instructorCourse, 'instructor_id', 'instructors', 'id');
     $database->addForeignKey($instructorCourse, 'course_id', 'courses', 'id');
+    $database->addForeignKey($instructorCourse, 'enrollment_id', 'enrollments', 'id');
 
     // Seed the instructor_course table with data
     $database->seedData($instructorCourse, $instructorCourseData);
@@ -183,7 +184,7 @@ if (!$database->tableExists($enrollments)) {
 
 // Define table structure for classes
 $classes = 'classes';
-$classesColumns = 'id INT AUTO_INCREMENT PRIMARY KEY, course_id INT, instructor_id INT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, deleted_at TIMESTAMP NULL';
+$classesColumns = 'id INT AUTO_INCREMENT PRIMARY KEY, course_id INT, instructor_id INT,start_time Time, end_time Time, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, deleted_at TIMESTAMP NULL';
 
 // Define seed data for classes (assuming Arsalan is conducting classes for Mathematics course)
 $classesData = [

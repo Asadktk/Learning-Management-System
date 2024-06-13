@@ -7,6 +7,9 @@ const BASE_PATH = __DIR__ . '/../';
 // var_dump(BASE_PATH);
 
 require BASE_PATH.'Core/functions.php';
+
+// uncomment this below comand to create and seed data in table 
+
 // require './Seeder.php';
 
 

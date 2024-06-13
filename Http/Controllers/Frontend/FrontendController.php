@@ -32,4 +32,15 @@ class FrontendController
         view('frontend/course/show.view.php', ['course' => $course]);
     }
 
+
+    public function showEnrollmentForm($courseId)
+    {
+        
+        $courseModel = new Course();
+        $course = $courseModel->getCourseDetails($courseId);
+
+        
+        view('frontend/course/enrolled.view.php', ['course' => $course]);
+    }
+
 }

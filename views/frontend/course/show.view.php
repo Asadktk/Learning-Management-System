@@ -41,9 +41,19 @@
         <div class="col-lg-4">
 
           <div class="course-info d-flex justify-content-between align-items-center">
-            <h5>Trainer</h5>
-            <p><a href="#"><?= htmlspecialchars($course['instructor_name'] ?? 'Unknown Instructor'); ?></a></p>
+            <h5>Trainers</h5>
+            <?php
+            $instructorNames = isset($course['instructor_names']) ? explode(',', $course['instructor_names']) : [];
+            if (!empty($instructorNames)) {
+              foreach ($instructorNames as $instructorName) {
+                echo '<p><a href="#">' . htmlspecialchars($instructorName) . '</a></p>';
+              }
+            } else {
+              echo '<p>Unknown Instructors</p>';
+            }
+            ?>
           </div>
+
 
           <div class="course-info d-flex justify-content-between align-items-center">
             <h5>Course Fee</h5>
@@ -69,7 +79,7 @@
           </div>
           <!-- enroll cta -->
           <a style="background-color: #04AA6D; border: none; color: white; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer; padding: 6px 18px;
-             border-radius: 7px;" href="/course-enroll/<?=  $course['id'] ?>">enroll</a>
+             border-radius: 7px;" href="/course-enroll/<?= $course['id'] ?>">enroll</a>
         </div>
       </div>
 

@@ -16,15 +16,19 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card">
-                            <div class="card-header">Update Course</div>
+                            <div class="card-header d-flex align-items-center justify-content-between">Update Course 
+                            <a href="/admin/courses" class="btn btn-primary ">Back to Courses</a>
+
+                            </div>
                             <div class="card-body">
                                 <div class="card-title">
                                     <h3 class="text-center title-2">Course</h3>
                                 </div>
                                 <hr>
-                                <form id="course-form" method="POST" novalidate="novalidate">
+                                <form id="course-form" action="/admin/course/update" method="POST">
                                     <!-- <input type="hidden" name="_method" value="PUT"> -->
 
+                                    <input type="hidden" id="course-id" name="course_id" value="<?= $course['id'] ?? '' ?>">
 
                                     <div class="form-group">
                                         <select multiple name="instructor_ids[]" id="course-select" class="form-control">
@@ -39,7 +43,6 @@
 
 
                                     <div class="form-group">
-                                        <input type="hidden" id="course-id" value="<?= $course['id'] ?? '' ?>">
                                         <label for="title" class="control-label mb-1">Course Title</label>
                                         <input type="text" id="title" name="title" class="form-control" value="<?= $course['title'] ?? '' ?>">
                                     </div>
@@ -85,7 +88,6 @@
                                         </button>
                                     </div>
                                 </form>
-
                             </div>
                         </div>
                     </div>

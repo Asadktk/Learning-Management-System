@@ -43,13 +43,15 @@ class AuthController
         $user = $authenticator->attempt($_POST['email'], $_POST['password']);
 
         if ($user) {
+
+            Session::put('role', $user['role']);
+
             switch ($user['role']) {
                 case 'admin':
-                    return redirect('/admin-dashboard');
                 case 'instructor':
                     return redirect('/admin-dashboard');
                 case 'user':
-                    return redirect('/user/dashboard');
+                    return redirect('/');
                 default:
                     return redirect('/');
             }

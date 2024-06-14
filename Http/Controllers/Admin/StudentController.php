@@ -36,6 +36,8 @@ class StudentController
         ]);
     }
 
+    
+
     public function block($id)
     {
         $StudentModel = new Student();

@@ -29,10 +29,11 @@ class Student
 
     public function getStudentById($id)
     {
+        // Fetch student details along with user information
         $sql = 'SELECT s.*, u.name as user_name, u.email as user_email
-            FROM students AS s 
-            JOIN users AS u ON s.user_id = u.id 
-            WHERE u.role_id = 3 AND s.id = :id';
+                FROM students AS s 
+                JOIN users AS u ON s.user_id = u.id 
+                WHERE u.role_id = 3 AND s.id = :id';
         $statement = $this->db->connection->prepare($sql);
         $statement->bindParam(':id', $id);
         $statement->execute();
@@ -42,40 +43,32 @@ class Student
             return null;
         }
 
-        // Fetch courses with the specific instructor for each enrollment
+        // Fetch courses and instructors for each enrollment using the instructor_course table
         $sqlCourses = 'SELECT cr.*, ic.instructor_id, u_instructor.name AS instructor_name, u_instructor.email AS instructor_email
-                   FROM enrollments AS e
-                   JOIN courses AS cr ON e.course_id = cr.id
-                   JOIN instructor_course AS ic ON e.id = ic.enrollment_id
-                   JOIN instructors AS i ON ic.instructor_id = i.id
-                   JOIN users AS u_instructor ON i.user_id = u_instructor.id
-                   WHERE e.student_id = :id';
+                       FROM enrollments AS e
+                       JOIN instructor_course AS ic ON e.instructorcourse_id = ic.id
+                       JOIN courses AS cr ON ic.course_id = cr.id
+                       JOIN instructors AS i ON ic.instructor_id = i.id
+                       JOIN users AS u_instructor ON i.user_id = u_instructor.id
+                       WHERE e.student_id = :student_id';
         $statementCourses = $this->db->connection->prepare($sqlCourses);
-        $statementCourses->bindParam(':id', $id);
+        $statementCourses->bindParam(':student_id', $id);
         $statementCourses->execute();
         $courses = $statementCourses->fetchAll(\PDO::FETCH_ASSOC);
 
-        // Fetch classes for each course with the specific instructor
-        $classes = [];
-        foreach ($courses as $course) {
-            $sqlClasses = 'SELECT c.*, u_instructor.name as instructor_name, u_instructor.email as instructor_email
-                       FROM classes AS c
-                       JOIN instructors AS i ON c.instructor_id = i.id
-                       JOIN users AS u_instructor ON i.user_id = u_instructor.id
-                       WHERE c.course_id = :course_id AND i.id = :instructor_id';
-            $statementClasses = $this->db->connection->prepare($sqlClasses);
-            $statementClasses->bindParam(':course_id', $course['id']);
-            $statementClasses->bindParam(':instructor_id', $course['instructor_id']);
-            $statementClasses->execute();
-            $classesForCourse = $statementClasses->fetchAll(\PDO::FETCH_ASSOC);
-            foreach ($classesForCourse as $class) {
-                $class['course'] = $course;
-                $classes[] = $class;
-            }
+        if (!$courses) {
+            // Debugging step: Print the query or an error message
+            // echo "No courses found for the student.";
+            return null;
         }
 
+        // Debugging step: Print courses
+        // echo '<pre>';
+        // print_r($courses);
+        // echo '</pre>';
+        // die();
+
         $student['courses'] = $courses;
-        $student['classes'] = $classes;
 
         return $student;
     }
@@ -104,7 +97,4 @@ class Student
         $statement = $this->db->connection->prepare($sql);
         $statement->execute(['id' => $id]);
     }
-
-
-    
 }

@@ -8,42 +8,44 @@ $router->post('/register-store', 'AuthController@registerStore');
 $router->delete('/logout', 'AuthController@logout');
 
 // admin 
-$router->get('/admin-dashboard', 'Admin\AdminController@index');
+$router->get('/admin-dashboard', 'Admin\AdminController@index')->only('admin');
 
 
-$router->get('/admin/students', 'Admin\StudentController@index');
-$router->get('/admin/student/show/{id}', 'Admin\StudentController@show');
-$router->get('/students/fetch', 'Admin\StudentController@getInstructors');
-$router->get('/admin/student/block/{id}', 'Admin\StudentController@block');
-$router->get('/admin/student/unblock/{id}', 'Admin\StudentController@unblock');
-$router->get('/admin/student/destroy/{id}', 'Admin\StudentController@destroy');
+$router->get('/admin/students', 'Admin\StudentController@index')->only('admin');
+$router->get('/admin/student/show/{id}', 'Admin\StudentController@show')->only('admin');
+$router->get('/students/fetch', 'Admin\StudentController@getInstructors')->only('admin');
+$router->get('/admin/student/block/{id}', 'Admin\StudentController@block')->only('admin');
+$router->get('/admin/student/unblock/{id}', 'Admin\StudentController@unblock')->only('admin');
+$router->get('/admin/student/destroy/{id}', 'Admin\StudentController@destroy')->only('admin');
 
-$router->get('/instructors', 'Admin\InstructorController@index');
-$router->get('/admin/instructor/show/{id}', 'Admin\InstructorController@show');
-$router->get('/instructors/fetch', 'Admin\InstructorController@getInstructors');
-$router->get('/admin/instructor/block/{id}', 'Admin\InstructorController@block');
-$router->get('/admin/instructor/unblock/{id}', 'Admin\InstructorController@unblock');
-$router->get('/admin/instructor/destroy/{id}', 'Admin\InstructorController@destroy');
+$router->get('/instructors', 'Admin\InstructorController@index')->only('admin');
+$router->get('/admin/instructor/show/{id}', 'Admin\InstructorController@show')->only('admin');
+$router->get('/instructors/fetch', 'Admin\InstructorController@getInstructors')->only('admin');
+$router->get('/admin/instructor/block/{id}', 'Admin\InstructorController@block')->only('admin');
+$router->get('/admin/instructor/unblock/{id}', 'Admin\InstructorController@unblock')->only('admin');
+$router->get('/admin/instructor/destroy/{id}', 'Admin\InstructorController@destroy')->only('admin');
 
 
-$router->get('/admin/courses', 'Admin\CoursesController@index');
-$router->get('/admin/courses/create', 'Admin\CoursesController@create');
-$router->post('/admin/course/store', 'Admin\CoursesController@store');
-$router->get('/admin/course/edit/{id}', 'Admin\CoursesController@edit');
-$router->post('/admin/course/update/{id}', 'Admin\CoursesController@update');
-$router->get('/admin/course/destroy/{id}', 'Admin\CoursesController@destroy');
-$router->get('/admin/course/show/{id}', 'Admin\CoursesController@show');
+$router->get('/admin/courses', 'Admin\CoursesController@index')->only('admin');
+$router->get('/admin/courses/create', 'Admin\CoursesController@create')->only('admin');
+$router->post('/admin/course/store', 'Admin\CoursesController@store')->only('admin');
+$router->get('/admin/course/edit/{id}', 'Admin\CoursesController@edit')->only('admin');
+$router->post('/admin/course/update/{id}', 'Admin\CoursesController@update')->only('admin');
+$router->get('/admin/course/destroy/{id}', 'Admin\CoursesController@destroy')->only('admin');
+$router->get('/admin/course/show/{id}', 'Admin\CoursesController@show')->only('admin');
 
 
 
 //instructor
-$router->get('/classes-index', 'Instructor\ClassController@index');
-$router->get('/classes-create', 'Instructor\ClassController@create');
-$router->post('/classes-store', 'Instructor\ClassController@store');
-$router->get('/classes-edit/{id}', 'Instructor\ClassController@edit');
-$router->post('/classes-update/{id}', 'Instructor\ClassController@update');
-$router->get('/classes-show/{id}', 'Instructor\ClassController@show');
-$router->get('/classes-destroy/{id}', 'Instructor\ClassController@destroy');
+// $router->get('/admin-dashboard', 'Admin\AdminController@index')->only('instructor');
+
+$router->get('/classes-index', 'Instructor\ClassController@index')->only('instructor');
+$router->get('/classes-create', 'Instructor\ClassController@create')->only('instructor');
+$router->post('/classes-store', 'Instructor\ClassController@store')->only('instructor');
+$router->get('/classes-edit/{id}', 'Instructor\ClassController@edit')->only('instructor');
+$router->post('/classes-update/{id}', 'Instructor\ClassController@update')->only('instructor');
+$router->get('/classes-show/{id}', 'Instructor\ClassController@show')->only('instructor');
+$router->get('/classes-destroy/{id}', 'Instructor\ClassController@destroy')->only('instructor');
 
 
 

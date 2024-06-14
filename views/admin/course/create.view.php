@@ -22,15 +22,16 @@
                                     <h3 class="text-center title-2">Course</h3>
                                 </div>
                                 <hr>
-                                <form id="course-form" method="post" novalidate="novalidate">
+                                <form id="course-form" action="/admin/course/store" method="POST">
 
 
 
                                     <div class="form-group">
-                                        <select multiple name="course_id" id="course-select" class="form-control">
-                                            <option value="0">Please select</option>
+                                    
+
+                                        <select id="instructors" name="instructor_ids[]" multiple required  class="form-control">
                                             <?php foreach ($instructors as $instructor) : ?>
-                                                <option value="<?= $instructor['id']; ?>"><?= $instructor['name']; ?></option>
+                                                <option value="<?php echo $instructor['id']; ?>"><?php echo $instructor['name']; ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                     </div>

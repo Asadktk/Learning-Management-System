@@ -6,8 +6,9 @@ use Core\Session;
 use Core\Validator;
 use Http\Models\Role;
 use Http\Models\User;
-use Http\Models\Course;  
 use Core\Authenticator;
+use Http\Models\Course;
+use Http\Models\Enrollment;
 use Http\Models\Instructor;
 
 class FrontendController
@@ -16,7 +17,7 @@ class FrontendController
     {
         $courseModel = new Course();
         $instructorModel = new Instructor();
-        
+
         $courses = $courseModel->getAllCourses();
         $instructors = $instructorModel->getAllInstructors();
 
@@ -25,7 +26,7 @@ class FrontendController
 
     public function show($courseId)
     {
-        
+
         $courseModel = new Course();
         $course = $courseModel->getCourseDetails($courseId);
         // dd($course);
@@ -35,12 +36,40 @@ class FrontendController
 
     public function showEnrollmentForm($courseId)
     {
-        
+
         $courseModel = new Course();
         $course = $courseModel->getCourseDetails($courseId);
 
-        
+
         view('frontend/course/enrolled.view.php', ['course' => $course]);
     }
 
+    public function enrollStudent($courseId)
+    {
+
+        if (isset($_SESSION['user']['id'])) {
+
+            $studentId = $_SESSION['user']['id'];
+
+
+            $courseModel = new Course();
+            $course = $courseModel->getCourseDetails($courseId);
+
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $instructorId = $_POST['instructor_id'];
+
+                // Perform enrollment
+                $enrollmentModel = new Enrollment();
+                $enrollmentModel->enrollStudent($courseId, $instructorId, $studentId);
+
+                // Redirect or display success message
+                // Redirect to a success page or display a success message
+            }
+
+            // Load view
+            view('frontend/course/enrolled.view.php', ['course' => $course]);
+        } else {
+            redirect('/login');
+        }
+    }
 }

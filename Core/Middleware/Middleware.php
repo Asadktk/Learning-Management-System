@@ -1,11 +1,15 @@
 <?php
 namespace Core\Middleware;
+
+use Core\Middleware\Admin;
+
 class Middleware{
 
    public const MAP = [
         'guest' => Guest::class,
-        // 'auth' => Auth::class,
-        // 'confirm' => Auth::class,
+        'admin' => Admin::class,
+        'instructor' => Instructor::class,
+        'student' => Student::class,
     ];
 
 

@@ -36,16 +36,15 @@ class CoursesController
         $startDate = $_POST['start_date'];
         $endDate = $_POST['end_date'];
 
-       
+
         $course = new Course();
         $courseId = $course->createCourse($title, $description, $fee, $availableSeat, $startDate, $endDate);
 
         if ($courseId) {
             // Assign instructors to the course
-            $instructorIds = $_POST['instructor_ids']; 
+            $instructorIds = $_POST['instructor_ids']; // Assuming it's an array
 
             foreach ($instructorIds as $instructorId) {
-                $course = new Course();
                 $course->assignInstructorToCourse($instructorId, $courseId);
             }
 
@@ -129,13 +128,12 @@ class CoursesController
         $availableSeat = $_POST['available_seat'] ?? null;
         $startDate = $_POST['start_date'] ?? null;
         $endDate = $_POST['end_date'] ?? null;
-        $instructorIds = $_POST['instructor_ids'] ?? []; // Assuming you are sending the selected instructor ids from the form
+        $instructorIds = $_POST['instructor_ids'] ?? [];
+        error_log("Instructor IDs: " . print_r($instructorIds, true)); // Log instructorIds
+       dd($instructorIds);
 
         $course = new Course();
-        $result = $course->updateCourse($id, $title, $description, $fee, $availableSeat, $startDate, $endDate);
-
-        // Update instructor assignments for the course
-        $course->updateInstructorAssignments($id, $instructorIds);
+        $result = $course->updateCourse($id, $title, $description, $fee, $availableSeat, $startDate, $endDate, $instructorIds);
 
         if ($result) {
             $response = [
@@ -152,6 +150,8 @@ class CoursesController
         header('Content-Type: application/json');
         echo json_encode($response);
     }
+
+
 
     public function destroy($id)
     {

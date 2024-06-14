@@ -16,7 +16,10 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card">
-                            <div class="card-header">Create Class</div>
+                            <div class="card-header  d-flex align-items-center justify-content-between">Create Class
+                            <a href="/admin/courses" class="btn btn-primary ">Back to Classes</a>
+
+                            </div>
                             <div class="card-body">
                                 <div class="card-title">
                                     <h3 class="text-center title-2">Class</h3>

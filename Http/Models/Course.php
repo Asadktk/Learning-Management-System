@@ -24,16 +24,18 @@ class Course
 
     public function getCourseDetails($courseId)
     {
-        $sql = 'SELECT courses.*, users.name as instructor_name, instructors.id as instructor_id
+        $sql = 'SELECT courses.*, users.name as instructor_name, GROUP_CONCAT(instructors.id) as instructor_ids, GROUP_CONCAT(users.name) as instructor_names
                 FROM courses
                 LEFT JOIN instructor_course ON courses.id = instructor_course.course_id
                 LEFT JOIN instructors ON instructors.id = instructor_course.instructor_id
                 LEFT JOIN users ON users.id = instructors.user_id
-                WHERE courses.id = :courseId';
+                WHERE courses.id = :courseId
+                GROUP BY courses.id';
         $statement = $this->db->connection->prepare($sql);
         $statement->execute(['courseId' => $courseId]);
         return $statement->fetch(\PDO::FETCH_ASSOC);
     }
+
 
     public function getCoursesByIds(array $courseIds)
     {
@@ -62,13 +64,14 @@ class Course
         $stmt->bindValue(':end_date', $endDate);
 
         if ($stmt->execute()) {
-            return true;
+            return $this->db->connection->lastInsertId(); // Return the ID of the newly created course
         } else {
             return false;
         }
     }
 
-    
+
+
 
     public function assignInstructorToCourse($instructorId, $courseId)
     {
@@ -77,15 +80,15 @@ class Course
         $stmt->bindValue(':instructor_id', $instructorId, \PDO::PARAM_INT);
         $stmt->bindValue(':course_id', $courseId, \PDO::PARAM_INT);
 
-        // Execute the query
         if ($stmt->execute()) {
-            return true; 
+            return true;
         } else {
-            return false; 
+            return false;
         }
     }
 
-   
+
+
 
     public function getInstructorsForCourse($courseId)
     {
@@ -99,13 +102,10 @@ class Course
     }
 
 
-
-    public function updateCourse($id, $title, $description, $fee, $availableSeat, $startDate, $endDate)
+    public function updateCourse($id, $title, $description, $fee, $availableSeat, $startDate, $endDate, $instructorIds)
     {
         $query = "UPDATE courses SET title = :title, description = :description, fee = :fee, available_seat = :available_seat, start_date = :start_date, end_date = :end_date WHERE id = :id";
-
         $stmt = $this->db->connection->prepare($query);
-
         $stmt->bindValue(':title', $title);
         $stmt->bindValue(':description', $description);
         $stmt->bindValue(':fee', $fee, \PDO::PARAM_INT);
@@ -115,6 +115,8 @@ class Course
         $stmt->bindValue(':id', $id, \PDO::PARAM_INT);
 
         if ($stmt->execute()) {
+            // Update instructor assignments for the course
+            $this->updateInstructorAssignments($id, $instructorIds);
             return true;
         } else {
             return false;
@@ -123,37 +125,39 @@ class Course
 
     public function updateInstructorAssignments($courseId, $instructorIds)
     {
-        // Delete existing instructor assignments for the course
+        // Remove existing assignments
         $deleteQuery = "DELETE FROM instructor_course WHERE course_id = :course_id";
         $deleteStmt = $this->db->connection->prepare($deleteQuery);
-        $deleteStmt->bindValue(':course_id', $courseId);
+        $deleteStmt->bindValue(':course_id', $courseId, \PDO::PARAM_INT);
         $deleteStmt->execute();
 
-        // Insert new instructor assignments for the course
+        // Insert new assignments
+        $insertQuery = "INSERT INTO instructor_course (instructor_id, course_id) VALUES (:instructor_id, :course_id)";
+        $insertStmt = $this->db->connection->prepare($insertQuery);
+
         foreach ($instructorIds as $instructorId) {
-            $insertQuery = "INSERT INTO instructor_course (instructor_id, course_id) VALUES (:instructor_id, :course_id)";
-            $insertStmt = $this->db->connection->prepare($insertQuery);
-            $insertStmt->bindValue(':instructor_id', $instructorId);
-            $insertStmt->bindValue(':course_id', $courseId);
+            $insertStmt->bindValue(':instructor_id', $instructorId, \PDO::PARAM_INT);
+            $insertStmt->bindValue(':course_id', $courseId, \PDO::PARAM_INT);
             $insertStmt->execute();
         }
     }
 
 
-    
+
+
 
     public function deleteCourse($id)
     {
-        
+
         $query = "DELETE FROM courses WHERE id = :id";
         $stmt = $this->db->connection->prepare($query);
-        $stmt->bindParam(":id", $id, \PDO::PARAM_INT); 
+        $stmt->bindParam(":id", $id, \PDO::PARAM_INT);
 
-        
+
         if ($stmt->execute()) {
             return true;
         }
 
-        return false; 
+        return false;
     }
 }

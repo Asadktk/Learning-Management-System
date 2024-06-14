@@ -35,11 +35,24 @@
 
             <div class="row">
                 <div class="col-lg-12">
-                    <form action="enroll.php" method="post">
+                    <form action="/course-enroll/<?= htmlspecialchars($course['id']); ?>" method="post">
                         <div class="form-group">
-                            <label for="instructor_name">Trainer</label>
-                            <input type="text" id="instructor_name" name="instructor_name" class="form-control" value="<?= htmlspecialchars($course['instructor_name'] ?? 'Unknown Instructor'); ?>" readonly>
+                            <label for="instructor_id">Trainer</label>
+                            <select id="instructor_id" name="instructor_id" class="form-control">
+                                <?php
+                                $instructorIds = isset($course['instructor_ids']) ? explode(',', $course['instructor_ids']) : [];
+                                $instructorNames = isset($course['instructor_names']) ? explode(',', $course['instructor_names']) : [];
+                                if (!empty($instructorIds) && !empty($instructorNames)) {
+                                    foreach (array_combine($instructorIds, $instructorNames) as $instructorId => $instructorName) {
+                                        echo '<option value="' . htmlspecialchars($instructorId) . '">' . htmlspecialchars($instructorName) . '</option>';
+                                    }
+                                } else {
+                                    echo '<option value="">Unknown Instructor</option>';
+                                }
+                                ?>
+                            </select>
                         </div>
+
 
                         <div class="form-group">
                             <label for="fee">Course Fee</label>

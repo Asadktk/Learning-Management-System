@@ -1,6 +1,6 @@
 <aside class="menu-sidebar d-none d-lg-block">
         <div class="logo">
-            <a href="#">
+            <a href="/admin-dashboard">
                 <img src="/assets/images/icon/logo.png" alt="Cool Admin" />
             </a>
         </div>

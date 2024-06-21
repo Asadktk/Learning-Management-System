@@ -35,13 +35,35 @@
 
             <div class="row">
                 <div class="col-lg-12">
+                    <div class="container">
+                        <?php if (isset($_SESSION['error'])) : ?>
+                            <?php if ($_SESSION['error'] === 'no_seats_available') : ?>
+                                <div class="alert alert-danger" role="alert">
+                                    There are no available seats for this course at the moment.
+                                </div>
+                            <?php elseif ($_SESSION['error'] === 'already_enrolled') : ?>
+                                <div class="alert alert-danger" role="alert">
+                                    You are already enrolled in this course.
+                                </div>
+                            <?php endif; ?>
+                            <?php unset($_SESSION['error']); ?>
+                        <?php elseif (isset($_SESSION['success']) && $_SESSION['success'] === 'enrollment_success') : ?>
+                            <div class="alert alert-success" role="alert">
+                                You have successfully enrolled in the course.
+                            </div>
+                            <?php unset($_SESSION['success']); ?>
+                        <?php endif; ?>
+
+                    </div>
+
+
                     <form action="/course-enroll/<?= htmlspecialchars($course['id']); ?>" method="post">
                         <div class="form-group">
                             <label for="instructor_id">Trainer</label>
-                            <select id="instructor_id" name="instructor_id" class="form-control">
+                            <select id="instructor_id" name="instructor_id" class="form-control  mb-3">
                                 <?php
-                                $instructorIds = isset($course['instructor_ids']) ? explode(',', $course['instructor_ids']) : [];
-                                $instructorNames = isset($course['instructor_names']) ? explode(',', $course['instructor_names']) : [];
+                                $instructorIds = $course['instructor_ids'] ?? [];
+                                $instructorNames = $course['instructor_names'] ?? [];
                                 if (!empty($instructorIds) && !empty($instructorNames)) {
                                     foreach (array_combine($instructorIds, $instructorNames) as $instructorId => $instructorName) {
                                         echo '<option value="' . htmlspecialchars($instructorId) . '">' . htmlspecialchars($instructorName) . '</option>';
@@ -53,20 +75,19 @@
                             </select>
                         </div>
 
-
                         <div class="form-group">
                             <label for="fee">Course Fee</label>
-                            <input type="text" id="fee" name="fee" class="form-control" value="<?= htmlspecialchars($course['fee'] ?? '0.00$'); ?>" readonly>
+                            <input type="text" id="fee" name="fee" class="form-control  mb-3" value="<?= htmlspecialchars($course['fee'] ?? '0.00$'); ?>" readonly>
                         </div>
 
                         <div class="form-group">
                             <label for="available_seat">Available Seats</label>
-                            <input type="text" id="available_seat" name="available_seat" class="form-control" value="<?= htmlspecialchars($course['available_seat'] ?? '00'); ?>" readonly>
+                            <input type="text" id="available_seat" name="available_seat" class="form-control  mb-3" value="<?= htmlspecialchars($availableSeats ?? '00'); ?>" readonly> <!-- Display available seats here -->
                         </div>
 
                         <div class="form-group">
                             <label for="schedule">Schedule</label>
-                            <input type="text" id="schedule" name="schedule" class="form-control" value="<?php
+                            <input type="text" id="schedule" name="schedule" class="form-control  mb-3" value="<?php
                                                                                                             if ($course['start_date'] && $course['end_date']) {
                                                                                                                 echo date('F j, Y', strtotime($course['start_date'])) . ' - ' . date('F j, Y', strtotime($course['end_date']));
                                                                                                             } else {
@@ -78,6 +99,8 @@
                         <!-- enroll cta -->
                         <input type="submit" class="btn btn-primary" value="Enroll" style="width: 100%;">
                     </form>
+                    <a href="/" class="btn btn-primary mt-3">Back to Courses</a>
+
                 </div>
             </div>
 

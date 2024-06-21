@@ -20,6 +20,9 @@
                             <!-- <button class="mb-4 au-btn au-btn-icon au-btn--green au-btn--small">
                         <i class="zmdi zmdi-plus"></i>add item</button> -->
                             <a class="mb-4 au-btn au-btn-icon au-btn--green au-btn--small" href="/admin/courses/create">Add Course</a>
+                           
+                           
+                            <?php require base_path('views/partials/messages.php') ?>
 
                             <table class="table table-borderless table-striped table-earning">
                                 <thead>
@@ -39,14 +42,14 @@
                                 <tbody>
                                     <?php if (!empty($courses)) : ?>
                                         <?php foreach ($courses as $course) : ?>
-                                            <tr>
+                                            <tr id="course-<?= $course['id']; ?>">
                                                 <td><?= $course['title'] ?></td>
                                                 <td><?= $course['start_date'] ?></td>
                                                 <td><?= $course['end_date'] ?></td>
                                                 <th>
                                                     <a class="btn btn-success btn-sm" href="/admin/course/edit/<?= $course['id']; ?>">Edit</a>
                                                     <a class="btn btn-primary btn-sm" href="/admin/course/show/<?= $course['id']; ?>">View</a>
-                                                    <a class="btn btn-danger btn-sm btn-delete" href="/admin/course/destroy/<?= $course['id']; ?>">Delete</a>
+                                                    <a class="btn btn-danger btn-sm btn-delete text-white" onclick="deleteCourse(<?= $course['id']; ?>)">Delete</a>
 
 
                                                 </th>
@@ -72,5 +75,28 @@
     <!-- END MAIN CONTENT-->
     <!-- END PAGE CONTAINER-->
 </div>
+
+<script>
+    function deleteCourse(courseId) {
+        if (confirm('Are you sure you want to delete this course?')) {
+            $.ajax({
+                url: '/admin/course/destroy/' + courseId,
+                type: 'GET',
+                success: function(response) {
+                    if (response.error) {
+                        alert(response.error);
+                    } else {
+                        alert(response.message);
+                        $('#course-' + courseId).remove();
+                    }
+                },
+                error: function(xhr, status, error) {
+                    alert('An error occurred: ' + xhr.responseText);
+                }
+            });
+        }
+    }
+</script>
+
 
 <?php require base_path('views/partials/footer.php') ?>

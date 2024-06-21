@@ -16,8 +16,8 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="card">
-                            <div class="card-header d-flex align-items-center justify-content-between">Update Course 
-                            <a href="/admin/courses" class="btn btn-primary ">Back to Courses</a>
+                            <div class="card-header d-flex align-items-center justify-content-between">Update Course
+                                <a href="/admin/courses" class="btn btn-primary ">Back to Courses</a>
 
                             </div>
                             <div class="card-body">
@@ -29,6 +29,8 @@
                                     <!-- <input type="hidden" name="_method" value="PUT"> -->
 
                                     <input type="hidden" id="course-id" name="course_id" value="<?= $course['id'] ?? '' ?>">
+
+                                
 
                                     <div class="form-group">
                                         <select multiple name="instructor_ids[]" id="course-select" class="form-control">

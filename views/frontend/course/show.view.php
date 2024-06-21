@@ -29,17 +29,14 @@
 
   <!-- Courses Course Details Section -->
   <section id="courses-course-details" class="courses-course-details section">
-
     <div class="container" data-aos="fade-up">
-
       <div class="row">
         <div class="col-lg-8">
           <img src="assets/img/course-details.jpg" class="img-fluid" alt="">
           <h3><?= htmlspecialchars($course['title'] ?? 'Course Title'); ?></h3>
-          <p> <?= htmlspecialchars($course['description'] ?? 'Course Description'); ?></p>
+          <p><?= htmlspecialchars($course['description'] ?? 'Course Description'); ?></p>
         </div>
         <div class="col-lg-4">
-
           <div class="course-info d-flex justify-content-between align-items-center">
             <h5>Trainers</h5>
             <?php
@@ -54,7 +51,6 @@
             ?>
           </div>
 
-
           <div class="course-info d-flex justify-content-between align-items-center">
             <h5>Course Fee</h5>
             <p><?= htmlspecialchars($course['fee'] ?? '0.00$'); ?></p>
@@ -62,30 +58,27 @@
 
           <div class="course-info d-flex justify-content-between align-items-center">
             <h5>Available Seats</h5>
-            <p><?= htmlspecialchars($course['available_seat'] ?? '00'); ?></p>
+            <p><?= htmlspecialchars($availableSeats ?? '00'); ?></p> <!-- Display available seats here -->
           </div>
 
           <div class="course-info d-flex justify-content-between align-items-center">
             <h5>Schedule</h5>
-            <p> <?php
+            <p><?php
                 if ($course['start_date'] && $course['end_date']) {
                   echo date('F j, Y', strtotime($course['start_date'])) . ' - ' . date('F j, Y', strtotime($course['end_date']));
                 } else {
                   echo 'Schedule not available';
                 }
                 ?></p>
-
-
           </div>
+
           <!-- enroll cta -->
-          <a style="background-color: #04AA6D; border: none; color: white; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer; padding: 6px 18px;
-             border-radius: 7px;" href="/course-enroll/<?= $course['id'] ?>">enroll</a>
+          <a style="background-color: #04AA6D; border: none; color: white; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer; padding: 6px 18px; border-radius: 7px;" href="/course-enroll/<?= $course['id'] ?>">enroll</a>
         </div>
       </div>
-
     </div>
-
-  </section><!-- /Courses Course Details Section -->
+  </section>
+  <!-- /Courses Course Details Section -->
 
   <!-- Tabs Section -->
   <section id="tabs" class="tabs section">

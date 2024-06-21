@@ -22,18 +22,24 @@
                                     <h3 class="text-center title-2">Course</h3>
                                 </div>
                                 <hr>
+                            <?php require base_path('views/partials/messages.php') ?>
+
                                 <form id="course-form" action="/admin/course/store" method="POST">
 
 
 
                                     <div class="form-group">
-                                    
 
-                                        <select id="instructors" name="instructor_ids[]" multiple required  class="form-control">
+
+                                        <select id="instructors" name="instructor_ids[]" multiple class="form-control">
                                             <?php foreach ($instructors as $instructor) : ?>
                                                 <option value="<?php echo $instructor['id']; ?>"><?php echo $instructor['name']; ?></option>
                                             <?php endforeach; ?>
                                         </select>
+
+                                        <?php if (isset($errors['instructor_ids'])) : ?>
+                                            <p class="text-danger text-xs mt-2"><?= htmlspecialchars($errors['instructor_ids']) ?></p>
+                                        <?php endif; ?>
                                     </div>
 
 
@@ -41,12 +47,18 @@
                                         <label for="cc-payment" class="control-label mb-1">Courses Title</label>
                                         <input type="text" id="title" name="title" class="form-control">
 
+                                        <?php if (isset($errors['title'])) : ?>
+                                            <p class="text-danger text-xs mt-2"><?= htmlspecialchars($errors['title']) ?></p>
+                                        <?php endif; ?>
                                     </div>
 
                                     <div class="form-group">
                                         <label for="cc-payment" class="control-label mb-1">Courses Description</label>
-                                        <textarea name="textarea-input" id="textarea-input" rows="9" placeholder="Content..." class="form-control"></textarea>
+                                        <textarea name="description" id="description" rows="9" placeholder="Content..." class="form-control"></textarea>
 
+                                        <?php if (isset($errors['description'])) : ?>
+                                            <p class="text-danger text-xs mt-2"><?= htmlspecialchars($errors['description']) ?></p>
+                                        <?php endif; ?>
                                     </div>
 
                                     <div class="row">
@@ -55,6 +67,10 @@
                                                 <label for="cc-exp" class="control-label mb-1">Fee</label>
                                                 <input id="fee" name="fee" type="number" class="form-control">
                                                 <span class="help-block" data-valmsg-for="cc-exp" data-valmsg-replace="true"></span>
+
+                                                <?php if (isset($errors['fee'])) : ?>
+                                                    <p class="text-danger text-xs mt-2"><?= htmlspecialchars($errors['fee']) ?></p>
+                                                <?php endif; ?>
                                             </div>
                                         </div>
                                         <div class="col-6">
@@ -62,6 +78,10 @@
                                                 <label for="cc-exp" class="control-label mb-1">Available Seat</label>
                                                 <input id="available_seat" name="available_seat" type="number" class="form-control">
                                                 <span class="help-block" data-valmsg-for="cc-exp" data-valmsg-replace="true"></span>
+
+                                                <?php if (isset($errors['available_seat'])) : ?>
+                                                    <p class="text-danger text-xs mt-2"><?= htmlspecialchars($errors['available_seat']) ?></p>
+                                                <?php endif; ?>
                                             </div>
                                         </div>
                                     </div>
@@ -72,6 +92,10 @@
                                                 <label for="start_date" class="control-label mb-1">Start Date</label>
                                                 <input id="start_date" name="start_date" type="date" class="form-control">
                                                 <span class="help-block" data-valmsg-for="start_date" data-valmsg-replace="true"></span>
+
+                                                <?php if (isset($errors['start_date'])) : ?>
+                                                    <p class="text-danger text-xs mt-2"><?= htmlspecialchars($errors['start_date']) ?></p>
+                                                <?php endif; ?>
                                             </div>
                                         </div>
                                         <div class="col-6">
@@ -79,6 +103,10 @@
                                                 <label for="end_date" class="control-label mb-1">End Date </label>
                                                 <input id="end_date" name="end_date" type="date" class="form-control">
                                                 <span class="help-block" data-valmsg-for="end_date" data-valmsg-replace="true"></span>
+
+                                                <?php if (isset($errors['end_date'])) : ?>
+                                                    <p class="text-danger text-xs mt-2"><?= htmlspecialchars($errors['end_date']) ?></p>
+                                                <?php endif; ?>
                                             </div>
                                         </div>
                                     </div>

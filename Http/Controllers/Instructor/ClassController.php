@@ -2,13 +2,20 @@
 
 namespace Http\Controllers\Instructor;
 
+use Core\Session;
+use Core\Container;
 use Http\Models\User;
-use Core\Authenticator;
-use Http\Models\ClassModel;
 use Http\Models\Course;
+use Http\Models\ClassModel;
+use Http\Validation\ClassValidator;
 
 class ClassController
 {
+
+    public function __construct()
+    {
+        Container::handleErrors();
+    }
     public function index()
     {
         $instructorEmail = $_SESSION['user']['email'] ?? null;
@@ -55,29 +62,38 @@ class ClassController
         }
     }
 
+
+
     public function create()
     {
-        $courseModel = new Course();
-        $courses = $courseModel->getAllCourses();
+        $instructorId = $_SESSION['user']['id'];
 
-        // Pass courses to the view
-        view('instructor/class/create.view.php', ['courses' => $courses]);
+        // Fetch the courses assigned to the instructor
+        $courseModel = new Course();
+        $courses = $courseModel->getCoursesByInstructorId($instructorId);
+
+        // dd($courses);
+
+
+        view('instructor/class/create.view.php', ['courses' => $courses, 'errors' => Session::get('errors', [])]);
     }
+
 
     public function store()
     {
         header('Content-Type: application/json');
 
-        $startTime = $_POST['start_time'];
-        $endTime = $_POST['end_time'];
-        $userId = $_POST['user_id'];
+        $validationErrors = ClassValidator::validate($_POST);
 
-        if ($startTime >= $endTime) {
-            http_response_code(400);
-            echo json_encode(['error' => 'Start time must be less than end time']);
+        if (!empty($validationErrors)) {
+            http_response_code(422);
+            echo json_encode(['errors' => $validationErrors]);
             exit;
         }
 
+        $startTime = $_POST['start_time'];
+        $endTime = $_POST['end_time'];
+        $userId = $_POST['user_id'];
         $courseId = $_POST['course_id'];
 
         $classModel = new ClassModel();
@@ -92,13 +108,17 @@ class ClassController
 
         $result = $classModel->createClass($courseId, $instructorId, $startTime, $endTime);
 
-        if ($result) {
+        if ($result === true) {
             echo json_encode(['message' => 'Class created successfully', 'redirect' => '/classes-index']);
+        } elseif ($result === 'overlap') {
+            http_response_code(422);
+            echo json_encode(['error' => 'Another class overlaps with the specified time range.']);
         } else {
             http_response_code(500);
             echo json_encode(['error' => 'Failed to create class']);
         }
     }
+
 
 
 

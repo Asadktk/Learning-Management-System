@@ -8,7 +8,7 @@ $router->post('/register-store', 'AuthController@registerStore');
 $router->delete('/logout', 'AuthController@logout');
 
 // admin 
-$router->get('/admin-dashboard', 'Admin\AdminController@index')->only('admin');
+$router->get('/admin-dashboard', 'Admin\AdminController@index')->only('adminOrInstructor');
 
 
 $router->get('/admin/students', 'Admin\StudentController@index')->only('admin');
@@ -54,4 +54,9 @@ $router->get('/', 'Frontend\FrontendController@index');
 $router->get('/course-show/{id}', 'Frontend\FrontendController@show');
 $router->get('/course-enroll/{id}', 'Frontend\FrontendController@showEnrollmentForm');
 $router->post('/course-enroll/{id}', 'Frontend\FrontendController@enrollStudent');
+
+
+// students 
+$router->get('/student-frofile', 'Frontend\StudentController@viewProfile');
+
 

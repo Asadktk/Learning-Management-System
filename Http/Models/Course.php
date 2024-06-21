@@ -3,6 +3,7 @@
 namespace Http\Models;
 
 use Core\App;
+use Exception;
 use Core\Database;
 
 class Course
@@ -22,6 +23,21 @@ class Course
         return $statement->fetchAll(\PDO::FETCH_ASSOC);
     }
 
+    public function getCoursesByInstructorId($instructorId)
+    {
+        $sql = 'SELECT courses.*, instructors.user_id
+                FROM courses
+                INNER JOIN instructor_course ON courses.id = instructor_course.course_id
+                INNER JOIN instructors ON instructors.id = instructor_course.instructor_id
+                WHERE instructors.user_id = :instructorId';
+
+        $statement = $this->db->connection->prepare($sql);
+        $statement->execute(['instructorId' => $instructorId]);
+        return $statement->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+
+
     public function getCourseDetails($courseId)
     {
         $sql = 'SELECT courses.*, users.name as instructor_name, GROUP_CONCAT(instructors.id) as instructor_ids, GROUP_CONCAT(users.name) as instructor_names
@@ -37,17 +53,40 @@ class Course
     }
 
 
-    public function getCoursesByIds(array $courseIds)
+
+    public function getAvailableSeats($courseId, $instructorIds)
     {
-        if (empty($courseIds)) {
-            return [];
+        // Calculate available seats based on enrolled students
+        $enrollmentModel = new Enrollment();
+
+        // Initialize enrolled students count
+        $totalEnrolledStudents = 0;
+
+        // Iterate over each instructor to get their enrolled students count
+        foreach ($instructorIds as $instructorId) {
+            $enrolledStudentsCount = $enrollmentModel->getEnrolledStudentsCount($courseId, $instructorId);
+            $totalEnrolledStudents += $enrolledStudentsCount;
         }
 
-        $placeholders = implode(',', array_fill(0, count($courseIds), '?'));
-        $sql = "SELECT * FROM courses WHERE id IN ($placeholders)";
-        $statement = $this->db->connection->prepare($sql);
-        $statement->execute($courseIds);
-        return $statement->fetchAll(\PDO::FETCH_ASSOC);
+        // Fetch total available seats for the course
+        $courseDetails = $this->getCourseDetails($courseId);
+        $totalSeats = $courseDetails['available_seat'];
+
+        // Calculate available seats
+        $availableSeats = $totalSeats - $totalEnrolledStudents;
+
+        return $availableSeats;
+    }
+
+
+
+    public function getCourseById($courseId)
+    {
+        $query = "SELECT * FROM courses WHERE id = :course_id";
+        $stmt = $this->db->connection->prepare($query);
+        $stmt->bindValue(':course_id', $courseId, \PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
 
 
@@ -64,12 +103,21 @@ class Course
         $stmt->bindValue(':end_date', $endDate);
 
         if ($stmt->execute()) {
-            return $this->db->connection->lastInsertId(); // Return the ID of the newly created course
+            return $this->db->connection->lastInsertId(); 
         } else {
             return false;
         }
     }
 
+
+    public function titleExists($title)
+    {
+        $query = "SELECT COUNT(*) FROM courses WHERE title = :title";
+        $stmt = $this->db->connection->prepare($query);
+        $stmt->bindParam(':title', $title);
+        $stmt->execute();
+        return $stmt->fetchColumn() > 0;
+    }
 
 
 
@@ -102,49 +150,49 @@ class Course
     }
 
 
-    public function updateCourse($id, $title, $description, $fee, $availableSeat, $startDate, $endDate, $instructorIds)
-    {
-        $query = "UPDATE courses SET title = :title, description = :description, fee = :fee, available_seat = :available_seat, start_date = :start_date, end_date = :end_date WHERE id = :id";
+
+    public function updateCourse($courseId, $title, $description, $fee, $availableSeat, $startDate, $endDate) {
+        $query = "UPDATE courses SET title = :title, description = :description, fee = :fee, available_seat = :available_seat, start_date = :start_date, end_date = :end_date WHERE id = :courseId";
         $stmt = $this->db->connection->prepare($query);
+        $stmt->bindValue(':courseId', $courseId, \PDO::PARAM_INT);
         $stmt->bindValue(':title', $title);
         $stmt->bindValue(':description', $description);
         $stmt->bindValue(':fee', $fee, \PDO::PARAM_INT);
         $stmt->bindValue(':available_seat', $availableSeat, \PDO::PARAM_INT);
         $stmt->bindValue(':start_date', $startDate);
         $stmt->bindValue(':end_date', $endDate);
-        $stmt->bindValue(':id', $id, \PDO::PARAM_INT);
-
-        if ($stmt->execute()) {
-            // Update instructor assignments for the course
-            $this->updateInstructorAssignments($id, $instructorIds);
-            return true;
-        } else {
-            return false;
-        }
+        return $stmt->execute();
     }
 
-    public function updateInstructorAssignments($courseId, $instructorIds)
-    {
+    public function updateAssignedInstructors($courseId, $newInstructorIds) {
         // Remove existing assignments
-        $deleteQuery = "DELETE FROM instructor_course WHERE course_id = :course_id";
-        $deleteStmt = $this->db->connection->prepare($deleteQuery);
-        $deleteStmt->bindValue(':course_id', $courseId, \PDO::PARAM_INT);
-        $deleteStmt->execute();
+        $this->deleteCourseInstructors($courseId);
 
-        // Insert new assignments
-        $insertQuery = "INSERT INTO instructor_course (instructor_id, course_id) VALUES (:instructor_id, :course_id)";
-        $insertStmt = $this->db->connection->prepare($insertQuery);
-
-        foreach ($instructorIds as $instructorId) {
-            $insertStmt->bindValue(':instructor_id', $instructorId, \PDO::PARAM_INT);
-            $insertStmt->bindValue(':course_id', $courseId, \PDO::PARAM_INT);
-            $insertStmt->execute();
+        // Assign new instructors
+        foreach ($newInstructorIds as $instructorId) {
+            $this->assignInstructorToCourses($instructorId, $courseId);
         }
     }
 
+    private function deleteCourseInstructors($courseId) {
+        $query = "DELETE FROM instructor_course WHERE course_id = :courseId";
+        $stmt = $this->db->connection->prepare($query);
+        $stmt->bindValue(':courseId', $courseId, \PDO::PARAM_INT);
+        return $stmt->execute();
+    }
 
+    private function assignInstructorToCourses($instructorId, $courseId) {
+        $query = "INSERT INTO instructor_course (instructor_id, course_id) VALUES (:instructorId, :courseId)";
+        $stmt = $this->db->connection->prepare($query);
+        $stmt->bindValue(':instructorId', $instructorId, \PDO::PARAM_INT);
+        $stmt->bindValue(':courseId', $courseId, \PDO::PARAM_INT);
+        return $stmt->execute();
+    }
 
+   
+ 
 
+   
 
     public function deleteCourse($id)
     {

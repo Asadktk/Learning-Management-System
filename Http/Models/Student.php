@@ -73,7 +73,17 @@ class Student
         return $student;
     }
 
+    public function getStudentDetails($userId)
+    {
+        $sql = 'SELECT s.user_id, u.name, u.email, u.password
+                FROM students s
+                JOIN users u ON s.user_id = u.id
+                WHERE s.user_id = :userId';
 
+        $statement = $this->db->connection->prepare($sql);
+        $statement->execute(['userId' => $userId]);
+        return $statement->fetch(\PDO::FETCH_ASSOC);
+    }
 
 
 

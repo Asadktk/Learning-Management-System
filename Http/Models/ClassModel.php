@@ -25,6 +25,14 @@ class ClassModel
 
     public function createClass($courseId, $instructorId, $startTime, $endTime)
     {
+
+       
+
+        $existingClasses = $this->getClassesByInstructorAndTimeRange($instructorId, $startTime, $endTime);
+        if (!empty($existingClasses)) {
+            return 'overlap'; // There is a class that overlaps with the specified time range
+        }
+
         $query = "INSERT INTO " . $this->table . " (course_id, instructor_id, start_time, end_time) VALUES (:course_id, :instructor_id, :start_time, :end_time)";
 
         $stmt = $this->db->connection->prepare($query);
@@ -40,6 +48,14 @@ class ClassModel
         }
 
         return false;
+    }
+
+    public function getClassesByInstructorAndTimeRange($instructorId, $startTime, $endTime)
+    {
+        $sql = 'SELECT * FROM ' . $this->table . ' WHERE instructor_id = :instructorId AND ((start_time BETWEEN :startTime AND :endTime) OR (end_time BETWEEN :startTime AND :endTime))';
+        $statement = $this->db->connection->prepare($sql);
+        $statement->execute(['instructorId' => $instructorId, 'startTime' => $startTime, 'endTime' => $endTime]);
+        return $statement->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     public function getClassesByInstructors($instructorId)
@@ -97,7 +113,7 @@ class ClassModel
         $query = "DELETE FROM " . $this->table . " WHERE id = :id";
         $stmt = $this->db->connection->prepare($query);
         $stmt->bindParam(":id", $id);
-        
+
         if ($stmt->execute()) {
             return true;
         }

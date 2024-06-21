@@ -10,6 +10,7 @@ class Middleware{
         'admin' => Admin::class,
         'instructor' => Instructor::class,
         'student' => Student::class,
+        'adminOrInstructor' => AdminOrInstructor::class,
     ];
 
 

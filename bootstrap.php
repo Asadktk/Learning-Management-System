@@ -1,8 +1,11 @@
 <?php
+
 use Core\Container;
 use Core\Database;
 use Core\App;
 
+// Initialize error and exception handling
+\Core\Container::handleErrors();
 
 $container = new Container();
 
@@ -16,5 +19,7 @@ $container->bind('Core\Database', function () {
 // $db = $container->resolve('Core\Database');
 
 App::setContainer($container);
+
+
 
 // var_dump($db);

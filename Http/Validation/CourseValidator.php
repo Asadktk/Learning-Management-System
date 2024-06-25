@@ -15,9 +15,10 @@ class CourseValidator
 
         if (!isset($data['title']) || empty($data['title']) || !is_string($data['title'])) {
             $errors['title'] = 'Title is required and must be a string.';
-        } elseif (!ctype_alpha($data['title'])) {
-            $errors['title'] = 'Title must only contain alphabetic characters.';
+        } elseif (!preg_match('/^[a-zA-Z ]+$/', $data['title'])) {
+            $errors['title'] = 'Title must only contain alphabetic characters and spaces.';
         }
+        
 
         if (!isset($data['description']) || empty($data['description'])) {
             $errors['description'] = 'Description is required.';

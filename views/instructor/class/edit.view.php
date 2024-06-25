@@ -17,7 +17,7 @@
                     <div class="col-lg-12">
                         <div class="card">
                             <div class="card-header  d-flex align-items-center justify-content-between">Create Class
-                            <a href="/admin/courses" class="btn btn-primary ">Back to Classes</a>
+                                <a href="/classes-index" class="btn btn-primary ">Back to Classes</a>
 
                             </div>
                             <div class="card-body">
@@ -26,6 +26,7 @@
                                 </div>
                                 <hr>
                                 <form id="class-form" method="post" action="/classes-update/<?= $courseClass['id']; ?>" novalidate="novalidate">
+                                    <input type="hidden" name="_method" value="PUT" />
 
                                     <input type="hidden" id="user_id" name="user_id" value='<?php echo $_SESSION["user"]["id"]; ?>'>
                                     <input type="hidden" id="class_id" name="class_id" value='<?php echo $courseClass["id"]; ?>'>

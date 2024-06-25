@@ -19,7 +19,7 @@ class User
         $user = $this->getUserByEmail($email);
 
         if ($user && password_verify($password, $user['password'])) {
-            return $user; 
+            return $user;
         }
 
         return false;
@@ -48,7 +48,7 @@ class User
             if ($statement->rowCount() > 0) {
                 $userId = $this->db->connection->lastInsertId();
 
-                if ($role_id == 3) {    
+                if ($role_id == 3) {
                     $sql = 'INSERT INTO students (user_id) VALUES (:user_id)';
                 } elseif ($role_id == 2) {
                     $sql = 'INSERT INTO instructors (user_id) VALUES (:user_id)';
@@ -83,5 +83,15 @@ class User
         $statement->execute(['email' => $email]);
         return $statement->fetch(\PDO::FETCH_ASSOC);
     }
-    
+
+    public function getInstructorIdByUserId($userId)
+    {
+        $sql = 'SELECT id FROM instructors WHERE user_id = :userId';
+        $statement = $this->db->connection->prepare($sql);
+        $statement->bindValue(':userId', $userId, \PDO::PARAM_INT);
+        $statement->execute();
+        $result = $statement->fetch(\PDO::FETCH_ASSOC);
+
+        return $result ? $result['id'] : null;
+    }
 }

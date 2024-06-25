@@ -39,23 +39,19 @@
 
                     <div id="updateStatus"></div>
 
-                    <form id='updateProfileForm'  method="post" >
-                        <!-- <input type="hidden" name="_method" value="PUT" /> -->
-
-                        <div class="form-group">
-                            <label for="name">User Name</label>
-                            <input type="text" id="name" name="name" class="form-control mb-3" value="<?= htmlspecialchars($studentDetails['name']) ?>" required>
+                    <div style="font-family: Arial, sans-serif; background-color: #f2f2f2; padding: 20px;">
+                        <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
+                            <?php foreach ($courses as $course) : ?>
+                                <div style="background-color: #ffffff; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); border-radius: 8px; overflow: hidden; width: 300px; padding: 20px; transition: transform 0.3s ease; cursor: pointer;">
+                                    <div style="font-size: 1.3rem; font-weight: bold; margin-bottom: 10px;"><?= htmlspecialchars($course['course_title']) ?></div>
+                                    <div style="font-size: 0.9rem; color: #666666; margin-bottom: 15px;">
+                                        <strong>Instructor:</strong> <?= htmlspecialchars($course['instructor_username']) ?><br>
+                                        <strong>Email:</strong> <a href="mailto:<?= htmlspecialchars($course['instructor_email']) ?>" style="color: #3498db; text-decoration: none;"><?= htmlspecialchars($course['instructor_email']) ?></a>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
                         </div>
-
-                        <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="text" id="email" name="email" class="form-control mb-3" value="<?= htmlspecialchars($studentDetails['email']) ?>" readonly>
-                        </div>
-
-                        <!-- enroll cta -->
-                        <input type="submit" class="btn btn-primary" value="Update" style="width: 100%;">
-                    </form>
-
+                    </div>
 
 
                     <a href="/" class="btn btn-primary mt-3">Back to Courses</a>
@@ -80,9 +76,9 @@
 
             $.ajax({
                 url: '/update-profile',
-                type: 'POST', 
+                type: 'POST',
                 data: $(this).serialize(),
-                dataType: 'json', 
+                dataType: 'json',
                 success: function(response) {
                     if (response.redirect) {
                         window.location.href = response.redirect;

@@ -67,17 +67,51 @@ class Instructor
 
     public function softDelete($id)
     {
-        $sql = 'UPDATE instructors SET deleted_at = NOW() WHERE id = :id';
+
+        $sql = 'SELECT user_id FROM instructors WHERE id = :id';
         $statement = $this->db->connection->prepare($sql);
         $statement->execute(['id' => $id]);
+        $user_id = $statement->fetchColumn();
+
+        if ($user_id) {
+
+            $sql = 'UPDATE instructors SET deleted_at = NOW() WHERE id = :id';
+            $statement = $this->db->connection->prepare($sql);
+            $statement->execute(['id' => $id]);
+
+
+            $sql = 'UPDATE users SET deleted_at = NOW() WHERE id = :user_id';
+            $statement = $this->db->connection->prepare($sql);
+            $statement->execute(['user_id' => $user_id]);
+        }
     }
+
 
     public function unblock($id)
     {
-        $sql = 'UPDATE instructors SET deleted_at = NULL WHERE id = :id';
+
+        $sql = 'SELECT user_id FROM instructors WHERE id = :id';
         $statement = $this->db->connection->prepare($sql);
         $statement->execute(['id' => $id]);
+        $user_id = $statement->fetchColumn();
+
+        if ($user_id) {
+
+            $sql = 'UPDATE instructors SET deleted_at = NULL WHERE id = :id';
+            $statement = $this->db->connection->prepare($sql);
+            $statement->execute(['id' => $id]);
+
+
+            $sql = 'UPDATE users SET deleted_at = NULL WHERE id = :user_id';
+            $statement = $this->db->connection->prepare($sql);
+            $statement->execute(['user_id' => $user_id]);
+        }
     }
+
+
+
+
+
 
     public function delete($id)
     {
@@ -87,8 +121,103 @@ class Instructor
     }
 
 
-    
+    public function countActiveInstructors()
+    {
+        $sql = 'SELECT COUNT(*) AS total_active_instructors 
+            FROM instructors 
+            WHERE deleted_at IS NULL';
+        $statement = $this->db->connection->prepare($sql);
+        $statement->execute();
+        $result = $statement->fetch(\PDO::FETCH_ASSOC);
 
+        return $result['total_active_instructors'];
+    }
+
+
+    public function getInstructorDetails($userId)
+    {
+        $sql = 'SELECT i.user_id, u.name, u.email, u.password
+                FROM instructors i
+                JOIN users u ON i.user_id = u.id
+                WHERE i.user_id = :userId';
+
+        $statement = $this->db->connection->prepare($sql);
+        $statement->execute(['userId' => $userId]);
+        return $statement->fetch(\PDO::FETCH_ASSOC);
+    }
+
+    public function getInstructorDetail($userId)
+    {
+        $sql = 'SELECT i.id, u.name, u.email, u.password
+            FROM instructors i
+            JOIN users u ON i.user_id = u.id
+            WHERE i.user_id = :userId';
+
+        $statement = $this->db->connection->prepare($sql);
+        $statement->execute(['userId' => $userId]);
+        return $statement->fetch(\PDO::FETCH_ASSOC);
+    }
+
+
+    public function getInstructorDetailsByUserId($userId)
+    {
+        $sql = "SELECT i.*, u.name as user_name, u.email as user_email
+                FROM instructors i
+                INNER JOIN users u ON i.user_id = u.id
+                WHERE u.id = :userId";
+
+        $statement = $this->db->connection->prepare($sql);
+        $statement->bindParam(':userId', $userId, \PDO::PARAM_INT);
+        $statement->execute();
+
+        return $statement->fetch(\PDO::FETCH_ASSOC);
+    }
+
+    public function updateProfile($userId, $name, $hashedPassword)
+    {
+        // SQL query to update the user's name and password (if provided)
+        $query = "UPDATE instructors i
+                  INNER JOIN users u ON i.user_id = u.id
+                  SET u.name = :name";
+
+        // Include password update if a new password is provided
+        if (!empty($hashedPassword)) {
+            $query .= ", u.password = :password";
+        }
+
+        $query .= " WHERE u.id = :userId";
+
+        // Prepare the statement
+        $statement = $this->db->connection->prepare($query);
+
+        // Bind parameters
+        $statement->bindValue(':name', $name, \PDO::PARAM_STR);
+        $statement->bindValue(':userId', $userId, \PDO::PARAM_INT);
+
+        // Bind hashed password if provided
+        if (!empty($hashedPassword)) {
+            $statement->bindValue(':password', $hashedPassword, \PDO::PARAM_STR);
+        }
+
+        // Execute the statement
+        $success = $statement->execute();
+
+        return $success;
+    }
+
+    public function getHashedPassword($userId)
+    {
+        $query = "SELECT u.password
+                  FROM users u
+                  INNER JOIN instructors i ON u.id = i.user_id
+                  WHERE i.user_id = :userId";
+
+        $statement = $this->db->connection->prepare($query);
+        $statement->execute(['userId' => $userId]);
+        $result = $statement->fetchColumn(); // Assuming password is a single column
+
+        return $result;
+    }
 
     // public function updateInstructor($id, $name, $email, $password, $role_id)
     // {

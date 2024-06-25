@@ -3,6 +3,8 @@
 namespace Http\Controllers\Frontend;
 
 use Http\Models\Course;
+use Http\Models\Student;
+use Http\Models\ClassModel;
 use Http\Models\Enrollment;
 use Http\Models\Instructor;
 
@@ -13,13 +15,32 @@ class FrontendController
         $courseModel = new Course();
         $instructorModel = new Instructor();
 
+
+        $eventModel = new ClassModel();
+        $userModel = new Student();
+
+        // Fetch counts using respective model methods
+        $studentCount = $userModel->countStudents();
+        // dd($studentCount); // Assuming you have a method to count students
+        $courseCount = $courseModel->countCourses(); // Assuming you have a method to count courses
+        $eventCount = $eventModel->countClass(); // Assuming you have a method to count events
+        $trainerCount = $instructorModel->countActiveInstructors();
+
         $courses = $courseModel->getAllCourses();
         $instructors = $instructorModel->getAllInstructors();
 
-        view('frontend/index.view.php', ['courses' => $courses, 'instructors' => $instructors]);
+        view('frontend/index.view.php', ['courses' => $courses, 'instructors' => $instructors,'studentCount' => $studentCount,
+            'courseCount' => $courseCount,
+            'eventCount' => $eventCount,
+            'trainerCount' => $trainerCount,]);
     }
 
-    
+
+
+
+
+
+
 
     public function show($courseId)
     {
@@ -69,7 +90,7 @@ class FrontendController
         $courseModel = new Course();
         $course = $courseModel->getCourseDetails($courseId);
 
-     
+
         if (isset($course['instructor_ids']) && is_string($course['instructor_ids'])) {
             $course['instructor_ids'] = explode(',', $course['instructor_ids']);
         }
@@ -80,7 +101,7 @@ class FrontendController
 
         $availableSeats = $courseModel->getAvailableSeats($courseId, $course['instructor_ids']);
 
-    
+
         view('frontend/course/enrolled.view.php', [
             'course' => $course,
             'availableSeats' => $availableSeats
@@ -90,9 +111,9 @@ class FrontendController
 
     public function enrollStudent($courseId)
     {
-       
+
         if (!isset($_SESSION['user']['id']) || !is_numeric($_SESSION['user']['id'])) {
-           
+
             redirect('/login');
             exit;
         }
@@ -103,12 +124,12 @@ class FrontendController
         $course = $courseModel->getCourseDetails($courseId);
 
         if (!$course) {
-           
+
             redirect('/404');
             exit;
         }
 
-       
+
         $enrollmentModel = new Enrollment();
         $alreadyEnrolled = $enrollmentModel->isStudentEnrolled($courseId, $studentId);
         if ($alreadyEnrolled) {
@@ -120,7 +141,7 @@ class FrontendController
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $instructorId = $_POST['instructor_id'];
 
-            
+
             $availableSeats = $courseModel->getAvailableSeats($courseId, [$instructorId]);
 
             if ($availableSeats <= 0) {
@@ -129,7 +150,7 @@ class FrontendController
                 exit;
             }
 
-            
+
             $enrollmentModel->enrollStudent($courseId, $instructorId, $studentId);
 
             $_SESSION['success'] = 'enrollment_success';
@@ -137,7 +158,9 @@ class FrontendController
             exit;
         }
 
-       
+
         view('frontend/course/enrolled.view.php', ['course' => $course]);
     }
+
+   
 }

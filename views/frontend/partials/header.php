@@ -26,7 +26,8 @@
         <input type="hidden" name="_method" value="DELETE" />
         <button class="btn-getstarted border-0">Log Out</button>
       </form>
-      <a class="btn-getstarted" href="/student-frofile">View Profile</a>
+      <a class="btn-getstarted" href="/student-profile">View Profile</a>
+      <a class="btn-getstarted" href="/my-course">My Course</a>
       
 
     <?php else : ?>

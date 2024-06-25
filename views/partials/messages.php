@@ -4,24 +4,27 @@ use Core\Session;
 
 // Check for success message
 if (Session::has('success')) {
-    echo '<div class="alert alert-success">' . Session::get('success') . '</div>';
+    $successMessage = Session::get('success');
+    echo '<div class="alert alert-success">' . htmlspecialchars($successMessage, ENT_QUOTES, 'UTF-8') . '</div>';
 }
 
 // Check for warning message
 if (Session::has('warning')) {
-    echo '<div class="alert alert-warning">' . Session::get('warning') . '</div>';
+    $warningMessage = Session::get('warning');
+    echo '<div class="alert alert-warning">' . htmlspecialchars($warningMessage, ENT_QUOTES, 'UTF-8') . '</div>';
 }
 
 // Check for error message
 if (Session::has('error')) {
-    echo '<div class="alert alert-danger">' . Session::get('error') . '</div>';
+    $errorMessage = Session::get('error');
+    echo '<div class="alert alert-danger">' . htmlspecialchars($errorMessage, ENT_QUOTES, 'UTF-8') . '</div>';
 }
 
 // Check for validation errors (if it's an array)
 if (Session::has('errors') && is_array(Session::get('errors'))) {
     echo '<div class="alert alert-danger"><ul>';
     foreach (Session::get('errors') as $error) {
-        echo '<li>' . $error . '</li>';
+        echo '<li>' . htmlspecialchars($error, ENT_QUOTES, 'UTF-8') . '</li>';
     }
     echo '</ul></div>';
 }

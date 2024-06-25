@@ -19,15 +19,14 @@
 
                             <!-- <button class="mb-4 au-btn au-btn-icon au-btn--green au-btn--small">
                         <i class="zmdi zmdi-plus"></i>add item</button> -->
-                            <a class="mb-4 au-btn au-btn-icon au-btn--green au-btn--small" href="/classes-create">Add Class</a>
+                            <!-- <a class="mb-4 au-btn au-btn-icon au-btn--green au-btn--small" href="/classes-create">Add Class</a> -->
 
                             <table class="table table-borderless table-striped table-earning">
                                 <thead>
                                     <tr>
                                     <tr>
                                         <th>Course Name</th>
-                                        <th>Start Date</th>
-                                        <th>End Date</th>
+
                                         <th> Operation</th>
 
                                         <!-- <th> <button class="au-btn au-btn-icon au-btn--green au-btn--small">
@@ -37,30 +36,16 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php if (!empty($classesWithCourses)) : ?>
-                                        <?php foreach ($classesWithCourses as $classWithCourse) : ?>
-                                            <tr>
-                                                <td><?= $classWithCourse['course']['title'] ?></td>
-                                                <td><?= $classWithCourse['start_time'] ?></td>
-                                                <td><?= $classWithCourse['end_time'] ?></td>
-                                                <th>
-                                                   
-                                                        <a class="btn btn-success btn-sm" href="/classes-edit/<?= $classWithCourse['id']; ?>">Edit</a>
-                                                        <a class="btn btn-primary btn-sm" href="/classes-show/<?= $classWithCourse['id']; ?>">View</a>
-                                                   
-                                                    <form action="/classes-destroy/<?= $classWithCourse['id']; ?>" method="POST" style="display: inline;">
-                                                        <input type="hidden" name="_method" value="DELETE" />
-                                                        <button class="btn btn-danger btn-sm">Delete</button>
-                                                    </form>
-                                                </th>
-
-                                            </tr>
-                                        <?php endforeach; ?>
-                                    <?php else : ?>
+                                    <?php foreach ($courses as $course) : ?>
                                         <tr>
-                                            <td colspan="4">No classes available</td>
+                                            <td><?php echo htmlspecialchars($course['title']); ?></td>
+                                            <td>
+                                                <!-- Example operation buttons -->
+                                                <a href="/instructor/enrolled/student/<?= $course['id']; ?>" class="btn btn-sm btn-info">Show all Enrolled Students for this course</a>
+                                                
+                                            </td>
                                         </tr>
-                                    <?php endif; ?>
+                                    <?php endforeach; ?>
                                 </tbody>
 
                             </table>

@@ -26,7 +26,7 @@
                                     <img src="/assets/images/icon/avatar-01.jpg" alt="John Doe" />
                                 </div>
                                 <div class="content">
-                                    <a class="js-acc-btn" href="#">john doe</a>
+                                    <a class="js-acc-btn" href="#"><?php echo htmlspecialchars($_SESSION['user']['name']); ?></a>
                                 </div>
                                 <div class="account-dropdown js-dropdown">
                                     <div class="info clearfix">
@@ -37,33 +37,25 @@
                                         </div>
                                         <div class="content">
                                             <h5 class="name">
-                                                <a href="#">john doe</a>
+                                                <a href="#"><?php echo htmlspecialchars($_SESSION['user']['name']); ?></a>
                                             </h5>
-                                            <span class="email">johndoe@example.com</span>
+                                            <span class="email"><?php echo htmlspecialchars($_SESSION['user']['email']); ?></span>
                                         </div>
                                     </div>
                                     <div class="account-dropdown__body">
                                         <div class="account-dropdown__item">
-                                            <a href="#">
+                                            <a href="/instructor/profile">
                                                 <i class="zmdi zmdi-account"></i>Account</a>
                                         </div>
-                                        <div class="account-dropdown__item">
-                                            <a href="#">
-                                                <i class="zmdi zmdi-settings"></i>Setting</a>
-                                        </div>
-                                        <div class="account-dropdown__item">
-                                            <a href="#">
-                                                <i class="zmdi zmdi-money-box"></i>Billing</a>
-                                        </div>
-                                    </div>
+                                        
                                     <div class="account-dropdown__footer">
-                                    <div class="margin-right">
-                                        <form action="/logout" method="POST">
+                                        <div class="margin-right">
+                                            <form action="/logout" method="POST">
 
-                                            <input type="hidden" name="_method" value="DELETE" />
-                                            <button><i class="zmdi zmdi-money-box"></i>Log Out</button>
-                                        </form>
-                                    </div>
+                                                <input type="hidden" name="_method" value="DELETE" />
+                                                <i class="zmdi zmdi-money-box"></i> <button>Log Out</button>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

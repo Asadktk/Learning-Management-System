@@ -107,4 +107,50 @@ class Student
         $statement = $this->db->connection->prepare($sql);
         $statement->execute(['id' => $id]);
     }
+
+
+    public function countStudents()
+    {
+        $sql = 'SELECT COUNT(*) AS total_students FROM students';
+        $statement = $this->db->connection->prepare($sql);
+        $statement->execute();
+        $result = $statement->fetch(\PDO::FETCH_ASSOC);
+
+        return $result['total_students'];
+    }
+
+
+    public function updateStudentName($data)
+    {
+        $sql = 'UPDATE users SET name = :name WHERE id = :user_id';
+        $statement = $this->db->connection->prepare($sql);
+
+        // Bind parameters
+        $statement->bindValue(':name', $data['name']);
+        $statement->bindValue(':user_id', $data['user_id']);
+
+
+        return $statement->execute();
+    }
+
+    public function getCoursesForStudent($studentId)
+    {
+        $sql = "SELECT 
+                   
+                    c.title AS course_title, 
+                    u.name AS instructor_username,
+                    u.email AS instructor_email
+                FROM enrollments e
+                JOIN instructor_course ic ON e.instructorcourse_id = ic.id
+                JOIN courses c ON ic.course_id = c.id
+                JOIN instructors i ON ic.instructor_id = i.id
+                JOIN users u ON i.user_id = u.id
+                WHERE e.student_id = :student_id";
+
+        $statement = $this->db->connection->prepare($sql);
+        $statement->bindValue(':student_id', $studentId, \PDO::PARAM_INT); // Assuming student_id is an integer
+        $statement->execute();
+
+        return $statement->fetchAll(\PDO::FETCH_ASSOC);
+    }
 }

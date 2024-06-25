@@ -7,6 +7,9 @@ use Core\Container;
 use Http\Models\User;
 use Http\Models\Course;
 use Http\Models\ClassModel;
+use Http\Models\Enrollment;
+use Http\Models\Instructor;
+use Http\Models\RequestModel;
 use Http\Validation\ClassValidator;
 
 class ClassController
@@ -196,6 +199,186 @@ class ClassController
             echo 'Class not found';
         }
     }
+
+
+    public function instructorCourse()
+    {
+        $instructorId = $_SESSION['user']['id']; // Assuming session structure
+
+        // Fetch the courses assigned to the instructor
+        $courseModel = new Course();
+        $courses = $courseModel->getCoursesByInstructorId($instructorId);
+
+        // Pass courses to your view
+        view('instructor/enrolledstudents/enrolledstudent.view.php', ['courses' => $courses,]);
+    }
+
+
+
+
+
+
+    public function enrolledStudents($courseId)
+    {
+        // Get the user ID from the session
+        $userId = $_SESSION['user']['id'];
+
+        // Get the instructor ID from the user ID
+        $userModel = new User();
+        $instructorId = $userModel->getInstructorIdByUserId($userId);
+        if (!$instructorId) {
+            echo 'Instructor not found';
+            return;
+        }
+
+        // Initialize the ClassModel to fetch enrolled students
+        $classModel = new Enrollment();
+
+        // Fetch enrolled students for the specific course and instructor
+        $enrolledStudents = $classModel->getEnrolledStudents($courseId, $instructorId);
+
+        // Fetch the course details
+        $courseModel = new Course();
+        $course = $courseModel->getCourseById($courseId);
+
+        // Pass the data to the view
+        view('instructor/enrolledstudents/showstudents.view.php', [
+            'course' => $course,
+            'enrolledStudents' => $enrolledStudents
+        ]);
+    }
+
+
+    public function profileShow()
+    {
+        // Check if user is logged in
+        if (!isset($_SESSION['user']['id']) || !is_numeric($_SESSION['user']['id'])) {
+            redirect('/login');
+            exit;
+        }
+
+        $userId = $_SESSION['user']['id'];
+
+        $instructorModel = new Instructor();
+
+        $instructorDetails = $instructorModel->getInstructorDetails($userId);
+        if (!$instructorDetails) {
+            redirect('/404');
+            exit;
+        }
+
+        view('instructor/profile/show.view.php', ['instructorDetails' => $instructorDetails]);
+    }
+
+
+    public function updateProfile()
+    {
+
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Extract POST data
+            $userId = $_POST['user_id'];
+            $name = $_POST['name'];
+            $email = $_POST['email'];
+            $newPassword = $_POST['password'];
+
+            // Initialize the instructor model
+            $instructorModel = new Instructor();
+
+            // Get current hashed password
+            $currentHashedPassword = $instructorModel->getHashedPassword($userId);
+
+            // Hash the new password if provided; otherwise, keep the current hashed password
+            if (!empty($newPassword)) {
+                $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+            } else {
+                $hashedPassword = $currentHashedPassword; // Keep the current hashed password
+            }
+
+            // Call updateProfile method in model
+            $success = $instructorModel->updateProfile($userId, $name, $hashedPassword);
+
+            if ($success) {
+                // Redirect to profile view or success page
+                redirect('/instructor/profile');
+            } else {
+                // Handle update failure (e.g., show error message)
+                echo "Failed to update profile.";
+            }
+        }
+    }
+
+    public function courses()
+    {
+
+        $courseModel = new Course();
+        $courses = $courseModel->getCourse();
+
+        view('instructor/courses/courses.view.php', ['courses' => $courses]);
+    }
+
+
+
+    public function sendRequest()
+    {
+      
+
+        if (!isset($_SESSION['user']['id']) || !is_numeric($_SESSION['user']['id'])) {
+            redirect('/login');
+            exit;
+        }
+
+        $userId = $_SESSION['user']['id'];
+        $instructorModel = new Instructor();
+
+        $instructorDetails = $instructorModel->getInstructorDetail($userId);
+       
+
+        if (!$instructorDetails) {
+            redirect('/404'); 
+            exit;
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+           
+            if (!isset($_POST['course_id'])) {
+                echo "Course ID is required.";
+                return;
+            }
+
+            
+            $courseId = $_POST['course_id'];
+
+            $requestData = [
+                'instructor_id' => $instructorDetails['id'],
+                'course_id' => $courseId,
+                'status' => true 
+            ];
+
+            $requestModel = new RequestModel();
+
+            $success = $requestModel->createRequest($requestData);
+
+            if ($success) {
+                // Redirect to success page or appropriate view
+                redirect('/courses');
+            } else {
+                // Handle insertion failure (e.g., show error message)
+                echo "Failed to send request.";
+            }
+        }
+
+       
+        $courseModel = new Course();
+        $courses = $courseModel->getCourses(); 
+
+        // Load view with necessary data
+        view('request/send_request.view.php', [
+            'courses' => $courses,
+            'instructorDetails' => $instructorDetails // Pass instructor details to the view
+        ]);
+    }
+
 
     public function destroy($id)
     {

@@ -13,11 +13,11 @@ use Http\Validation\CourseValidator;
 class CoursesController
 {
 
-    protected function respondWithError($message, $statusCode)
+    protected function respondWithError($errors, $statusCode)
     {
         header('Content-Type: application/json');
         http_response_code($statusCode);
-        echo json_encode(['error' => $message]);
+        echo json_encode(['errors' => $errors]);
         exit;
     }
 
@@ -62,10 +62,10 @@ class CoursesController
             $title = $_POST['title'];
             $course = new Course();
             if ($course->titleExists($title)) {
+                
                 $this->respondWithError(['title' => 'Title already exists.'], 422);
             }
 
-            // All validation passed, proceed with course creation
             $description = $_POST['description'];
             $fee = $_POST['fee'];
             $availableSeat = $_POST['available_seat'];
@@ -82,6 +82,8 @@ class CoursesController
                 }
 
                 Session::flash('success', 'Course created successfully.');
+
+            
                 $response = [
                     'message' => 'Course created successfully',
                     'redirect' => '/admin/courses'
@@ -190,7 +192,29 @@ class CoursesController
         }
     }
 
+    public function getCourse()
+    {
+        $active = $_GET['active'] === 'true';
+        $courseModel = new Course();
+        $course = $courseModel->getAllCoursesByCondtion($active);
 
+        echo json_encode($course);
+    }
+
+    public function block($id)
+    {
+            
+        $courseModel = new Course();
+        $courseModel->softDeleteCourse($id);
+        header('Location: /admin/courses');
+    }
+
+    public function unblock($id)
+    {
+        $courseModel = new Course();
+        $courseModel->unblockCourse($id);
+        header('Location: /admin/courses');
+    }
 
     public function destroy($id)
     {

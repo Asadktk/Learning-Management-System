@@ -26,7 +26,7 @@ class ClassModel
     public function createClass($courseId, $instructorId, $startTime, $endTime)
     {
 
-       
+
 
         $existingClasses = $this->getClassesByInstructorAndTimeRange($instructorId, $startTime, $endTime);
         if (!empty($existingClasses)) {
@@ -119,5 +119,16 @@ class ClassModel
         }
 
         return false;
+    }
+
+
+    public function countClass()
+    {
+        $sql = 'SELECT COUNT(*) AS total_events FROM classes';
+        $statement = $this->db->connection->prepare($sql);
+        $statement->execute();
+        $result = $statement->fetch(\PDO::FETCH_ASSOC);
+
+        return $result['total_events'];
     }
 }

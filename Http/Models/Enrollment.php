@@ -76,4 +76,22 @@ class Enrollment
 
         return $result['enrolled_students'];
     }
+
+    public function getEnrolledStudents($courseId, $sessionInstructorId)
+    {
+        $sql = 'SELECT s.*, u.name as student_name 
+                FROM students s
+                JOIN users u ON s.user_id = u.id
+                JOIN enrollments e ON s.id = e.student_id
+                JOIN instructor_course ic ON e.instructorcourse_id = ic.id
+                WHERE ic.course_id = :courseId AND ic.instructor_id = :instructorId';
+
+        $statement = $this->db->connection->prepare($sql);
+        $statement->bindValue(':courseId', $courseId, \PDO::PARAM_INT);
+        $statement->bindValue(':instructorId', $sessionInstructorId, \PDO::PARAM_INT);
+        $statement->execute();
+        $results = $statement->fetchAll(\PDO::FETCH_ASSOC);
+
+        return $results;
+    }
 }

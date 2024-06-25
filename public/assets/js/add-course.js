@@ -37,7 +37,7 @@ $(document).ready(function() {
                 }
             },
             error: function(xhr, status, error) {
-                if (xhr.status === 422) { // Validation error
+                if (xhr.status === 422) {
                     var errors = xhr.responseJSON.errors;
                     for (var field in errors) {
                         if (errors.hasOwnProperty(field)) {

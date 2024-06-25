@@ -12,8 +12,8 @@ $(document).ready(function() {
         const isUpdateOperation = classIdElement.length > 0 && classIdElement.val() !== '';
 
         const url = isUpdateOperation ? `/classes-update/${classIdElement.val()}` : '/classes-store';
-        const method = 'POST';
 
+        const method = isUpdateOperation ? 'PUT' : 'POST';
         $.ajax({
             url: url,
             type: method,

@@ -33,7 +33,7 @@
                                 
 
                                     <div class="form-group">
-                                        <select multiple name="instructor_ids[]" id="course-select" class="form-control">
+                                        <select multiple name="instructor_ids[]" id="instructors" class="form-control">
                                             <?php foreach ($instructors as $instructor) : ?>
                                                 <?php $isSelected = in_array($instructor['id'], $selectedInstructors); ?>
                                                 <option value="<?= $instructor['id']; ?>" <?= $isSelected ? 'selected' : ''; ?>>

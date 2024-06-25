@@ -16,7 +16,7 @@ class Authenticator
         // Debug: Print the user object
         // var_dump('User: ', $user);
 
-        if ($user && password_verify($password, $user['password'])) {
+        if ($user && !$user['deleted_at'] && password_verify($password, $user['password'])) {
             $this->login($user); 
             return $user;
         }
@@ -28,6 +28,7 @@ class Authenticator
     {
         $_SESSION['user'] = [
             'id' => $user['id'],
+            'name' => $user['name'],
             'email' => $user['email'],
             'role' => $user['role'] 
         ];

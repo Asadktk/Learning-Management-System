@@ -43,11 +43,13 @@
                                         </div>
                                     </div>
                                     <div class="account-dropdown__body">
+                                    <?php if ($_SESSION['user']['role'] === 'instructor') : ?>
                                         <div class="account-dropdown__item">
                                             <a href="/instructor/profile">
                                                 <i class="zmdi zmdi-account"></i>Account</a>
                                         </div>
-                                        
+                                        <?php endif ?>
+                                         
                                     <div class="account-dropdown__footer">
                                         <div class="margin-right">
                                             <form action="/logout" method="POST">
